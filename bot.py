@@ -281,6 +281,6 @@ async def game(ctx):
 
 # Just for Fun
 
-bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.XsotDg.EMwRb7LAHea_tbJLOIvHI5suKT8")
+bot.run(token here)
 
 # Regular methods
