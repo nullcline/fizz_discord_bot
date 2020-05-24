@@ -170,8 +170,6 @@ async def get(ctx):
 				await ctx.message.channel.send(embed=embed)
 
 
-
-
 # Role Management 
 
 @bot.event
@@ -283,6 +281,6 @@ async def game(ctx):
 
 # Just for Fun
 
-bot.run("")
+bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.XsotDg.EMwRb7LAHea_tbJLOIvHI5suKT8")
 
 # Regular methods
