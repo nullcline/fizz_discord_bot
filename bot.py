@@ -17,7 +17,7 @@ gagged = []
 async def on_ready():
 	print("Running")
 
-# Basic Utility
+# Basic Utility 
 
 @bot.command()
 async def s(ctx):
@@ -283,6 +283,6 @@ async def game(ctx):
 
 # Just for Fun
 
-bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.XsjgPg.kIdVZr_hrNpK0aMO0XAhHfzgHOg")
+bot.run("")
 
 # Regular methods
