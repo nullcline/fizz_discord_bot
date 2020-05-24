@@ -1,7 +1,6 @@
 import discord
-import argparse
-from asyncio import sleep
 import asyncio
+from asyncio import sleep
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='sudo ')
@@ -281,6 +280,6 @@ async def game(ctx):
 
 # Just for Fun
 
-bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.XsotDg.EMwRb7LAHea_tbJLOIvHI5suKT8")
+bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.Xso2EA.E5sgS-UFQlsXSAR7wKRiSJ83JY8")
 
 # Regular methods
