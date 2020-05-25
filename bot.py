@@ -95,9 +95,6 @@ async def airstrike(ctx):
 
 		await target.move_to(channel=original_channel)
 
-		for x in range (12):
-			await target.send("Wake up <@{}> >:(".format(target.id), file=discord.File(open("blast.jpg", "rb")))
-
 @bot.command()
 async def gag(ctx):
 
@@ -279,6 +276,11 @@ async def game(ctx):
 
 
 # Just for Fun
+
+@bot.command()
+async def FUCK(ctx):
+
+	await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
 
 bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.Xso2EA.E5sgS-UFQlsXSAR7wKRiSJ83JY8")
 
