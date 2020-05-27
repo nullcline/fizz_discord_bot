@@ -217,7 +217,7 @@ games = {
 @bot.command()
 async def year(ctx):
 
-	year = int(ctx.message.content[9:])
+	year = int(float(ctx.message.content[9:]))
 
 	if year >= 5:
 		year = 5
@@ -282,6 +282,6 @@ async def FUCK(ctx):
 
 	await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
 
-bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.Xso2EA.E5sgS-UFQlsXSAR7wKRiSJ83JY8")
+bot.run("")
 
 # Regular methods
