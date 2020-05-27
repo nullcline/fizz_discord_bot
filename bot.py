@@ -196,15 +196,15 @@ years = {
 	2: "2nd Year",
 	3: "3rd Year",
 	4: "4th Year",
-	5: "5th Year+",
+	5: "5th Year +",
 }
 
 rollover = {
 	"Pre-EngPhys": "2nd Year",
 	"2nd Year": "3rd Year",
 	"3rd Year": "4th Year",
-	"4th Year": "5th Year+",
-	"5th Year+": "5th Year+"
+	"4th Year": "5th Year +",
+	"5th Year +": "5th Year +"
 }
 
 # More as society changes
