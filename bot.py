@@ -282,6 +282,6 @@ async def FUCK(ctx):
 
 	await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
 
-bot.run("zA3NDk0Mzk5NjA4NzUwMTIx.Xso2EA.E5sgS-UFQlsXSAR7wKRiSJ83JY8")
+bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.Xs627A.AAmCO5sAHfJwnas_ThvTC_2l2Bk")
 
 # Regular methods
