@@ -4,6 +4,7 @@ from asyncio import sleep
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='sudo ')
+bot.remove_command('help')
 embed_colour = discord.Colour.gold()
 
 # TODO: Have bot automatically find these based on the server the command is called
@@ -132,6 +133,17 @@ async def on_message(message):
 	if message.author.id in gagged:
 		await message.delete()
 	await bot.process_commands(message)
+
+@bot.command()
+async def help(ctx):
+	embed=discord.Embed(title="Commands ", description="{ } means input required", color=embed_colour)
+	embed.add_field(name="sudo shake {@target}", value="sudo get {subject_name} ", inline=True)
+	embed.add_field(name="moves target between two channels rapidly", value="im gonna change this dw about it", inline=True)
+	embed.add_field(name="sudo year {1,2,68, etc}", value="sudo game {minecraft}", inline=True)
+	embed.add_field(name="Assigns a year role. Increments in August", value="Assigns you a game role for @mentions", inline=True)
+	embed.add_field(name="sudo FUCK", value="", inline=True)
+	embed.add_field(name="FUCK", value="", inline=True)
+	await ctx.message.channel.send(embed=embed)
 
 # Library Commands	
 
