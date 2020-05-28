@@ -5,7 +5,7 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix='sudo ')
 bot.remove_command('help')
-embed_colour = discord.Colour.gold()
+embed_colour = discord.Colour.red()
 
 # TODO: Have bot automatically find these based on the server the command is called
 id1 = 709974781252075640
@@ -134,8 +134,8 @@ async def on_message(message):
 		await message.delete()
 	await bot.process_commands(message)
 
-	if message.content is "FUCK":
-		await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
+	if message.content.upper() == "FUCK":
+		await message.channel.send(file=discord.File(open("fuck.mp4", "rb")))
 
 @bot.command()
 async def help(ctx):
@@ -292,10 +292,10 @@ async def game(ctx):
 
 # Just for Fun
 
-@bot.command()
-async def FUCK(ctx):
+# @bot.command()
+# async def FUCK(ctx):
 
-	await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
+# 	await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
 
 bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.Xs627A.AAmCO5sAHfJwnas_ThvTC_2l2Bk")
 
