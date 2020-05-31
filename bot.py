@@ -11,6 +11,7 @@ embed_colour = discord.Colour.red()
 id1 = 709974781252075640
 id2 = 709974744329486346
 access_role = 689296629836415022
+
 gagged = []
 
 @bot.event
