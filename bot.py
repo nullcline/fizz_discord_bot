@@ -3,7 +3,7 @@ import asyncio
 from asyncio import sleep
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='sudo ')
+bot = commands.Bot(command_prefix=('sudo ', 'Sudo ', 'SUDO ', 'sudo'))
 bot.remove_command('help')
 embed_colour = discord.Colour.red()
 
