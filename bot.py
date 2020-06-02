@@ -227,7 +227,8 @@ games = {
 	"LEAGUE": "League of Legends",
 	"CS": "CS:GO",
 	"MINECRAFT": "Minecraft",
-	"SMASH": "Smash"
+	"SMASH": "Smash",
+	"VALORANT": "Valorant"
 }
 
 @bot.command()
