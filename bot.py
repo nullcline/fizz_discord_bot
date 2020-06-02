@@ -224,9 +224,10 @@ rollover = {
 
 # More as society changes
 games = {
-	"league": "League of Legends",
-	"cs": "CS:GO",
-	"minecraft": "Minecraft"
+	"LEAGUE": "League of Legends",
+	"CS": "CS:GO",
+	"MINECRAFT": "Minecraft",
+	"SMASH": "Smash"
 }
 
 @bot.command()
@@ -277,7 +278,7 @@ async def testroll(ctx):
 @bot.command()
 async def game(ctx):
 
-	request = str(ctx.message.content[10:])
+	request = str(ctx.message.content[10:]).upper()
 
 	role = discord.utils.get(ctx.guild.roles, name=games[request])
 	if role in ctx.message.author.roles:
