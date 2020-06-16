@@ -111,12 +111,12 @@ async def hiii(ctx):
 		pass
 
 	else:
-
+		ctx.message.channel.send("Pinging {}".format(target.display_name))
 		#current_channel = message.channel
 		original_channel = target.voice.channel
 	
 		for x in range(4):
-			await target.send("Wake up <@{}> >:(".format(target.id), file=discord.File(open("blast.jpg", "rb")))
+			await target.send("hey <@{}> get in discord".format(target.id), file=discord.File(open("blast.jpg", "rb")))
 			# await target.move_to(channel=monkey)
 			# await target.move_to(channel=zone)
 
