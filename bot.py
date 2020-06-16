@@ -98,7 +98,7 @@ async def airstrike(ctx):
 		await target.move_to(channel=original_channel)
 
 @bot.command()
-async def hiii(ctx):
+async def summon(ctx):
 	
 	monkey = bot.get_channel(id1)
 	zone = bot.get_channel(id2)
