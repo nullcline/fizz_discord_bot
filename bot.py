@@ -98,6 +98,31 @@ async def airstrike(ctx):
 		await target.move_to(channel=original_channel)
 
 @bot.command()
+async def hiii(ctx):
+	
+	monkey = bot.get_channel(id1)
+	zone = bot.get_channel(id2)
+
+	target = ctx.message.mentions[0]
+
+	ids = (role.id for role in target.roles)
+
+	if ctx.message.mention_everyone:
+		pass
+
+	else:
+
+		#current_channel = message.channel
+		original_channel = target.voice.channel
+	
+		for x in range(4):
+			await target.send("Wake up <@{}> >:(".format(target.id), file=discord.File(open("blast.jpg", "rb")))
+			# await target.move_to(channel=monkey)
+			# await target.move_to(channel=zone)
+
+		# await target.move_to(channel=original_channel)
+
+@bot.command()
 async def gag(ctx):
 
 	ids = (role.id for role in ctx.message.mentions[0].roles)
