@@ -148,6 +148,13 @@ async def ungag(ctx):
 		else:
 			await ctx.message.channel.send("{} isn't muted dumbass.".format(target.display_name))
 
+@bot.command()
+async def echo(ctx):
+
+	for x in range(100):
+		await ctx.message.channel.send("!ob leave")
+		await sleep(5)
+
 @bot.event
 async def on_message(message):
 	if message.author.id in gagged:
