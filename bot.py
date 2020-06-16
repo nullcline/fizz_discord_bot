@@ -151,11 +151,15 @@ async def ungag(ctx):
 @bot.command()
 async def echo(ctx):
 
-	msg = ctx.message.content[9:]
+	if ctx.author.id is 722364047839723561:
+		pass
+	
+	else:
+		msg = ctx.message.content[9:]
 
-	for x in range(5):
-		await ctx.message.channel.send(msg)
-		await sleep(0.5)
+		for x in range(5):
+			await ctx.message.channel.send(msg)
+			await sleep(0.5)
 
 @bot.event
 async def on_message(message):
