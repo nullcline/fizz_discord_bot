@@ -106,7 +106,7 @@ async def summon(ctx):
 		pass
 
 	else:
-		ctx.message.channel.send("Pinging")
+		await ctx.message.channel.send("Pinging")
 		#current_channel = message.channel
 	
 		for x in range(4):
