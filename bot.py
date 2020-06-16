@@ -99,19 +99,14 @@ async def airstrike(ctx):
 
 @bot.command()
 async def summon(ctx):
-	
-	monkey = bot.get_channel(id1)
-	zone = bot.get_channel(id2)
 
 	target = ctx.message.mentions[0]
-
-	ids = (role.id for role in target.roles)
 
 	if ctx.message.mention_everyone:
 		pass
 
 	else:
-		ctx.message.channel.send("Pinging {}".format(target.display_name))
+		ctx.message.channel.send("Pinging")
 		#current_channel = message.channel
 	
 		for x in range(4):
