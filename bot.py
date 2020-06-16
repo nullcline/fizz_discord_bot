@@ -151,9 +151,11 @@ async def ungag(ctx):
 @bot.command()
 async def echo(ctx):
 
-	for x in range(100):
-		await ctx.message.channel.send("!ob leave")
-		await sleep(5)
+	msg = ctx.message.content[9:]
+
+	for x in range(5):
+		await ctx.message.channel.send(msg)
+		await sleep(0.5)
 
 @bot.event
 async def on_message(message):
