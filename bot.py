@@ -153,7 +153,7 @@ async def echo(ctx):
 
 	msg = ctx.message.content[9:]
 
-	if ctx.author.id is 722364047839723561 or msg.upper is "FUCK":
+	if ctx.author.id is 722364047839723561 or msg.upper() is "FUCK":
 		pass
 	
 	else:
@@ -161,6 +161,18 @@ async def echo(ctx):
 		for x in range(5):
 			await ctx.message.channel.send(msg)
 			await sleep(0.5)
+
+		
+@bot.command(aliases=['j', 'joi'])
+async def join(ctx):
+    global voice
+    channel = ctx.author.voice.channel
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+        await ctx.send(f"Joined {channel}")
 
 @bot.event
 async def on_message(message):
