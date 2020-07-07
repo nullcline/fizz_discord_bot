@@ -231,7 +231,7 @@ async def get(ctx):
 
 @bot.event
 async def on_member_join(member):
-	general = bot.get_channel(689295380474888245)
+	general = bot.get_channel(729877762181169259)
 	embed = discord.Embed(
 		description = '**Welcome to the Fizz Discord <@{}>!**\n\nAssign yourself a role by typing: ```sudo year <Your Year #>```'.format(member.id),
 		colour = embed_colour
