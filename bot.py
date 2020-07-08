@@ -183,6 +183,9 @@ async def on_message(message):
 	if message.content.upper() == "FUCK":
 		await message.channel.send(file=discord.File(open("fuck.mp4", "rb")))
 
+	if message.content.upper() == "SOBBING":
+		await message.channel.send(file=discord.File(open("sobbing.png", "rb")))
+
 @bot.command()
 async def help(ctx):
 	embed=discord.Embed(title="Commands ", description="{ } means input required", color=embed_colour)
