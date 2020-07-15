@@ -256,7 +256,7 @@ async def on_member_join(member):
 
 years = {
 	1: "Pre-EngPhys",
-	2: "2nd Year",
+	2: "Pre-EngPhys",
 	3: "3rd Year",
 	4: "4th Year",
 	5: "5th Year +",
