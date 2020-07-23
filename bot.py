@@ -153,7 +153,7 @@ async def echo(ctx):
 
 	msg = ctx.message.content[9:]
 
-	if ctx.author.id is 722364047839723561 or msg.upper() is "FUCK":
+	if ctx.author.id == 722364047839723561 or msg.upper() == "FUCK":
 		pass
 	
 	else:
@@ -299,19 +299,29 @@ async def year(ctx):
 
 # TODO: make this command into a timed thing, maybe use the on_message to check if its sept 1st or not
 @bot.command()
-async def testroll(ctx):
+async def supersecretcommandname(ctx):
 
-	all_years = list(rollover.keys())
+	if ctx.message.author.id == 168388106049814528:
+		all_years = list(rollover.keys())
+		members = ctx.guild.members
 	
-	for role in ctx.message.author.roles:
-		if role.name in all_years:
-			print(role)
-			new_role = discord.utils.get(ctx.guild.roles, name=rollover[role.name])
-			old_role = discord.utils.get(ctx.guild.roles, name=role.name)
+		for member in members:
+			print(member.roles)
+			for role in member.roles:
+				if role.name in all_years:
+					new_role = discord.utils.get(ctx.guild.roles, name=rollover[role.name])
+					old_role = discord.utils.get(ctx.guild.roles, name=role.name)
+					print(new_role)
+					print(old_role)
 
-			await ctx.message.author.remove_roles(old_role)
-			await ctx.message.author.add_roles(new_role)
-			break
+					await member.remove_roles(old_role)
+					await member.add_roles(new_role)
+					break
+	else: 
+		embed = discord.Embed(description = '**Peasants cannot use this command**', colour = embed_colour)
+		await ctx.message.channel.send(embed=embed)
+
+
 		
 @bot.command()
 async def game(ctx):
