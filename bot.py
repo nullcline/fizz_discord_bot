@@ -243,17 +243,6 @@ async def on_member_join(member):
 	await general.send(embed=embed)
 	await member.send(embed=embed)
 
-# @bot.command()
-# async def test(ctx):
-# 	general = bot.get_channel(689295380474888245)
-# 	embed = discord.Embed(
-# 		description = '**Welcome to the Fizz Discord <@{}>!**\n\nAssign yourself a role by typing: ```sudo year <Your Year #>```'.format(ctx.author.id),
-# 		colour = embed_colour
-# 	)
-
-# 	await general.send(embed=embed)
-# 	await ctx.author.send(embed=embed)
-
 years = {
 	1: "Pre-EngPhys",
 	2: "Pre-EngPhys",
