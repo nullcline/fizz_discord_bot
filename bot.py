@@ -42,7 +42,7 @@ async def on_message(message):
 
 # Basic Utility 
 
-@bot.command()
+@bot.command(aliases=['shake','shrek'])
 async def s(ctx):
 	
 	monkey = bot.get_channel(shake_room1)
@@ -69,8 +69,8 @@ async def s(ctx):
 @bot.command()
 async def airstrike(ctx):
 	
-	monkey = bot.get_channel(id1)
-	zone = bot.get_channel(id2)
+	monkey = bot.get_channel(shake_room1)
+	zone = bot.get_channel(shake_room2)
 
 	target = ctx.message.mentions[0]
 
