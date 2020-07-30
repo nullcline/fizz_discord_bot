@@ -2,14 +2,17 @@ import discord
 import asyncio
 from asyncio import sleep
 from discord.ext import commands
+import random, glob
 
+# Setup
 bot = commands.Bot(command_prefix=('sudo ', 'Sudo ', 'SUDO ', 'sudo'))
 bot.remove_command('help')
 embed_colour = discord.Colour.red()
+random.seed()
 
 # TODO: Have bot automatically find these based on the server the command is called
-id1 = 709974781252075640
-id2 = 709974744329486346
+shake_room1 = 709974781252075640
+shake_room2 = 709974744329486346
 access_role = 689296629836415022
 
 gagged = []
@@ -17,6 +20,25 @@ gagged = []
 @bot.event
 async def on_ready():
 	print("Running")
+
+# All functionality that checks every sent message.
+@bot.event
+async def on_message(message):
+	if message.author.id in gagged:
+		await message.delete()
+	await bot.process_commands(message)
+
+	if message.content.upper() == "FUCK":
+		await message.channel.send(file=discord.File(open("fuck.mp4", "rb")))
+
+	if message.content.upper() == "SOBBING":
+		await message.channel.send(file=discord.File(open("sobbing.png", "rb")))
+	
+	if message.content.upper() == "PAIN":
+		pain_size = len(glob.glob('pain/*'))
+		pain = random.uniform(0,pain_size)
+		await message.channel.send(file=discord.File(open("pain/{}.png".format(int(pain)), "rb")))
+
 
 # Basic Utility 
 
@@ -174,18 +196,7 @@ async def join(ctx):
         voice = await channel.connect()
         await ctx.send(f"Joined {channel}")
 
-@bot.event
-async def on_message(message):
-	if message.author.id in gagged:
-		await message.delete()
-	await bot.process_commands(message)
-
-	if message.content.upper() == "FUCK":
-		await message.channel.send(file=discord.File(open("fuck.mp4", "rb")))
-
-	if message.content.upper() == "SOBBING":
-		await message.channel.send(file=discord.File(open("sobbing.png", "rb")))
-
+# WIP. Help command that gives users all the commands and usage
 @bot.command()
 async def help(ctx):
 	embed=discord.Embed(title="Commands ", description="{ } means input required", color=embed_colour)
@@ -197,8 +208,7 @@ async def help(ctx):
 	embed.add_field(name="FUCK", value="", inline=True)
 	await ctx.message.channel.send(embed=embed)
 
-# Library Commands	
-
+# Dictionary of textbooks/guides related to course	
 subjects = {
 		"ENPH": "270 - http://93.174.95.29/main/CE1E90DC739863A9788F6324038E2DFB\nThe Bible - http://93.174.95.29/main/05D120938A4D7EBB5A706CE17F66B547",
 		"MECH": "260/360 - http://93.174.95.29/main/4B6F6F6DF336EF7DB2219A8E66B1C498\n",
@@ -210,6 +220,7 @@ subjects = {
 		"SPECS": "https://docs.google.com/spreadsheets/d/119mEbyerER02r8lSYzcT4sovFmxW48su0XgUqfFStf0/edit?usp=sharing",
 		}
 
+# Allows users to get saved 
 @bot.command()
 async def get(ctx): 
 	request = ctx.message.content.upper()
@@ -232,6 +243,8 @@ async def get(ctx):
 
 # Role Management 
 
+
+# Sends a welcome message to new members both in general chat and directly
 @bot.event
 async def on_member_join(member):
 	general = bot.get_channel(729877762181169259)
@@ -243,6 +256,7 @@ async def on_member_join(member):
 	await general.send(embed=embed)
 	await member.send(embed=embed)
 
+# Years for role manageament
 years = {
 	1: "Pre-EngPhys",
 	2: "Pre-EngPhys",
@@ -251,6 +265,7 @@ years = {
 	5: "5th Year +",
 }
 
+# Years for updating standing
 rollover = {
 	"Pre-EngPhys": "2nd Year",
 	"2nd Year": "3rd Year",
@@ -259,7 +274,7 @@ rollover = {
 	"5th Year +": "5th Year +"
 }
 
-# More as society changes
+# Game tags for role manageament
 games = {
 	"LEAGUE": "League of Legends",
 	"CS": "CS:GO",
@@ -268,6 +283,7 @@ games = {
 	"VALORANT": "Valorant"
 }
 
+# Allows users to give themselves a year role. Usage: sudo year <1,2,3,4....>
 @bot.command()
 async def year(ctx):
 
@@ -297,7 +313,7 @@ async def year(ctx):
 
 
 
-# TODO: make this command into a timed thing, maybe use the on_message to check if its sept 1st or not
+# Updates year standing. Only Andrew can use this :)
 @bot.command()
 async def supersecretcommandname(ctx):
 
@@ -322,7 +338,7 @@ async def supersecretcommandname(ctx):
 		await ctx.message.channel.send(embed=embed)
 
 
-		
+# Allows users to give themselves a game tag. Usage: sudo game <Minecraft, CS, lol>
 @bot.command()
 async def game(ctx):
 
@@ -338,14 +354,7 @@ async def game(ctx):
 		embed = discord.Embed(description = '**You were given the {} role**'.format(games[request]), colour = embed_colour)
 		await ctx.message.channel.send(embed=embed)
 
-
-# Just for Fun
-
-# @bot.command()
-# async def FUCK(ctx):
-
-# 	await ctx.message.channel.send("https://cdn.discordapp.com/attachments/652016685750026240/713848400436527175/Terraria3.mp4")
-
+# Discord Bot Token. Don't fucking leak this.
 bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.Xs627A.AAmCO5sAHfJwnas_ThvTC_2l2Bk")
 
 
