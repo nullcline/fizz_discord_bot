@@ -29,10 +29,10 @@ async def on_message(message):
 	await bot.process_commands(message)
 
 	if message.content.upper() == "FUCK":
-		await message.channel.send(file=discord.File(open("fuck.mp4", "rb")))
+		await message.channel.send(file=discord.File(open("media/fuck.mp4", "rb")))
 
 	if message.content.upper() == "SOBBING":
-		await message.channel.send(file=discord.File(open("sobbing.png", "rb")))
+		await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 	
 	if message.content.upper() == "PAIN":
 		pain_size = len(glob.glob('pain/*'))
@@ -45,8 +45,8 @@ async def on_message(message):
 @bot.command()
 async def s(ctx):
 	
-	monkey = bot.get_channel(id1)
-	zone = bot.get_channel(id2)
+	monkey = bot.get_channel(shake_room1)
+	zone = bot.get_channel(shake_room2)
 	target = ctx.message.mentions[0]
 	ids = (role.id for role in target.roles)
 
@@ -59,34 +59,6 @@ async def s(ctx):
 		await target.send("Wake up <@{}> >:(".format(target.id))
 	
 		for x in range(4):
-			# Moves user back and fourth, muting/deafening each loop
-			await target.edit(voice_channel=monkey, deafen=True, mute=True)
-			await sleep(0.2)
-			await target.edit(voice_channel=zone, deafen=False, mute=False)
-
-		await target.edit(voice_channel=original_channel)
-
-@bot.command()
-async def shake(ctx):
-	
-	monkey = bot.get_channel(id1)
-	zone = bot.get_channel(id2)
-
-	target = ctx.message.mentions[0]
-
-	ids = (role.id for role in target.roles)
-
-	if ctx.message.mention_everyone or access_role not in ids or not target.voice.self_deaf:
-		pass
-
-	else:
-
-		#current_channel = message.channel
-		original_channel = target.voice.channel
-		await target.send("Wake up <@{}> >:(".format(target.id))
-	
-		for x in range(4):
-
 			# Moves user back and fourth, muting/deafening each loop
 			await target.edit(voice_channel=monkey, deafen=True, mute=True)
 			await sleep(0.2)
@@ -113,7 +85,7 @@ async def airstrike(ctx):
 		original_channel = target.voice.channel
 	
 		for x in range(4):
-			await target.send("Wake up <@{}> >:(".format(target.id), file=discord.File(open("blast.jpg", "rb")))
+			await target.send("Wake up <@{}> >:(".format(target.id), file=discord.File(open("media/blast.jpg", "rb")))
 			await target.move_to(channel=monkey)
 			await target.move_to(channel=zone)
 
