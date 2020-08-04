@@ -1,8 +1,7 @@
-import discord
-import asyncio
+import discord, asyncio, random, glob, os
 from asyncio import sleep
 from discord.ext import commands
-import random, glob
+from PIL import Image, ImageFont, ImageDraw
 
 # Setup
 bot = commands.Bot(command_prefix=('sudo ', 'Sudo ', 'SUDO ', 'sudo'))
@@ -35,9 +34,32 @@ async def on_message(message):
 		await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 	
 	if message.content.upper() == "PAIN":
+
+		f = open("paincount.txt", "r")
+		paincount = int(f.readline())
+		f.close()
+		f = open("paincount.txt", "w")
+		paincount += 1
+		f.write(str(paincount))
+		f.close()
+
 		pain_size = len(glob.glob('pain/*'))
-		pain = random.uniform(0,pain_size)
-		await message.channel.send(file=discord.File(open("pain/{}.png".format(int(pain)), "rb")))
+		pain = random.uniform(0,pain_size-1)
+
+		img = Image.open("pain/{}.png".format(int(pain)))
+		_, h = img.size
+		draw = ImageDraw.Draw(img)
+		font = ImageFont.truetype("media/helvetica.ttf", int(h/7))
+		text = "pain: {}".format(paincount)
+		draw.text((3, 3), text, font=font, fill=(0,0,0))
+		draw.text((5, 3), text, font=font, fill=(0,0,0))
+		draw.text((3, 5), text, font=font, fill=(0,0,0))
+		draw.text((5, 5), text, font=font, fill=(0,0,0))
+		draw.text((4, 4), text,(255,255,255),font=font)
+		img.save("pain/temp.png")
+
+		await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+
 
 
 # Basic Utility 
