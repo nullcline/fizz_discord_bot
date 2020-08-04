@@ -35,28 +35,28 @@ async def on_message(message):
 	
 	if message.content.upper() == "PAIN":
 
-		f = open("paincount.txt", "r")
-		paincount = int(f.readline())
-		f.close()
-		f = open("paincount.txt", "w")
-		paincount += 1
-		f.write(str(paincount))
-		f.close()
+		# f = open("paincount.txt", "r")
+		# paincount = int(f.readline())
+		# f.close()
+		# f = open("paincount.txt", "w")
+		# paincount += 1
+		# f.write(str(paincount))
+		# f.close()
 
-		pain_size = len(glob.glob('pain/*'))
-		pain = random.uniform(0,pain_size-1)
+		# pain_size = len(glob.glob('pain/*'))
+		# pain = random.uniform(0,pain_size-1)
 
-		img = Image.open("pain/{}.png".format(int(pain)))
-		_, h = img.size
-		draw = ImageDraw.Draw(img)
-		font = ImageFont.truetype("media/helvetica.ttf", int(h/7))
-		text = "pain: {}".format(paincount)
-		draw.text((3, 3), text, font=font, fill=(0,0,0))
-		draw.text((5, 3), text, font=font, fill=(0,0,0))
-		draw.text((3, 5), text, font=font, fill=(0,0,0))
-		draw.text((5, 5), text, font=font, fill=(0,0,0))
-		draw.text((4, 4), text,(255,255,255),font=font)
-		img.save("pain/temp.png")
+		# img = Image.open("pain/{}.png".format(int(pain)))
+		# _, h = img.size
+		# draw = ImageDraw.Draw(img)
+		# font = ImageFont.truetype("media/helvetica.ttf", int(h/7))
+		# text = "pain: {}".format(paincount)
+		# draw.text((3, 3), text, font=font, fill=(0,0,0))
+		# draw.text((5, 3), text, font=font, fill=(0,0,0))
+		# draw.text((3, 5), text, font=font, fill=(0,0,0))
+		# draw.text((5, 5), text, font=font, fill=(0,0,0))
+		# draw.text((4, 4), text,(255,255,255),font=font)
+		# img.save("pain/temp.png")
 
 		await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
 
