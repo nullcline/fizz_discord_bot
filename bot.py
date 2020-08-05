@@ -37,17 +37,16 @@ async def on_message(message):
 
     if message.content.upper() == "PAIN":
 
-        f = open("paincount.txt", "r")
-        paincount = int(f.readline())
-        f.close()
-        f = open("paincount.txt", "w")
-        paincount += 1
-        f.write(str(paincount))
-        f.close()
+        # channel in my testing server
+        pain_ch = bot.get_channel(740658616238866503)
+        paincount = int(pain_ch.name)
+        await pain_ch.edit(name=str(paincount+1))
 
+        # rng for pain
         pain_size = len(glob.glob("pain/*"))
         pain = random.uniform(0, pain_size - 1)
 
+        # image processing
         img = Image.open("pain/{}.png".format(int(pain)))
         _, h = img.size
         draw = ImageDraw.Draw(img)
