@@ -321,7 +321,7 @@ years = {
 
 # Years for updating standing
 rollover = {
-    "Pre-EngPhys": "2nd Year",
+    "Pre-EngPhys": "Pre-EngPhys",
     "2nd Year": "3rd Year",
     "3rd Year": "4th Year",
     "4th Year": "5th Year +",
