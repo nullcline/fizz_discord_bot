@@ -370,7 +370,7 @@ async def year(ctx):
             await ctx.message.author.remove_roles(role)
 
 
-# Updates year standing. Only Andrew can use this :)
+# Updates year standing. Only Andrew can use this :) hi
 @bot.command()
 async def supersecretcommandname(ctx):
 
