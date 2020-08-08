@@ -313,7 +313,7 @@ async def on_member_join(member):
 # Years for role manageament
 years = {
     1: "Pre-EngPhys",
-    2: "Pre-EngPhys",
+    2: "2nd Year",
     3: "3rd Year",
     4: "4th Year",
     5: "5th Year +",
@@ -321,7 +321,7 @@ years = {
 
 # Years for updating standing
 rollover = {
-    "Pre-EngPhys": "Pre-EngPhys",
+    "Pre-EngPhys": "2nd Year",
     "2nd Year": "3rd Year",
     "3rd Year": "4th Year",
     "4th Year": "5th Year +",
