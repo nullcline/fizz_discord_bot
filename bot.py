@@ -230,7 +230,7 @@ async def help(ctx):
     embed = discord.Embed(
             description="Ṭ̶̔ḩ̴̦̑͗͜e̶̦͛r̷̮̹̂ͅe̸̬͖͊͂ ̷̖̭̻̃̐ì̸̛̲̥͗ș̸̆ ̸͇̅n̵̢͓͚͗͛ǫ̴̣̅ ̸̘̌͆̑ḫ̶̫̰̑e̷̼̼̒l̸̲͍̯̈́͂͊p̵̋̂͋͜", colour=embed_colour
         )
-        await ctx.message.channel.send(embed=embed)
+    await ctx.message.channel.send(embed=embed)
 
 
 # Dictionary of textbooks/guides related to course
