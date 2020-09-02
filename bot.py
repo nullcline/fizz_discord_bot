@@ -421,6 +421,13 @@ async def game(ctx):
         )
         await ctx.message.channel.send(embed=embed)
 
+@bot.command()
+async def iskevinbald(ctx):
+    embed = discord.Embed(
+            description="Yes", colour=embed_colour
+        )
+    await ctx.message.channel.send(embed=embed)
+
 
 # Discord Bot Token. Don't fucking leak this.
 token = open("token.txt", "r")
