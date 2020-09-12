@@ -13,13 +13,12 @@ random.seed()
 shake_room1 = 709974781252075640
 shake_room2 = 709974744329486346
 access_role = 689296629836415022
-
 gagged = []
-
 
 @bot.event
 async def on_ready():
     print("Running")
+    
 
 
 # All functionality that checks every sent message.
@@ -61,10 +60,90 @@ async def on_message(message):
         img.save("pain/temp.png")
 
         await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+    
+# Role Reactoin Setup
+# Message ID for the reaction message
+role_message = 754224412286517279
+# Channel ID for the reaction message
+role_channel = 752430500462854215
+emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','♾️']
+emoji_to_role = {
+    '1️⃣':0,
+    '2️⃣':1,
+    '3️⃣':2, 
+    '4️⃣':3,
+    '5️⃣':4,
+    '♾️':5
+}
+
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    fizz = bot.get_guild(689295380474888194)
+    year_roles = [
+    discord.utils.get(fizz.roles, name="Pre-EngPhys"),
+    discord.utils.get(fizz.roles, name="2nd Year"),
+    discord.utils.get(fizz.roles, name="3rd Year"),
+    discord.utils.get(fizz.roles, name="4th Year"),
+    discord.utils.get(fizz.roles, name="5th Year +"),
+    discord.utils.get(fizz.roles, name="Alumnus")
+    ]
+    
+    emoji = payload.emoji.name
+    post = await bot.get_channel(role_channel).fetch_message(role_message)
+    if (payload.message_id == role_message) :
+        
+        # Remove all previous reactions
+        for e in emojis:
+            if e != emoji:
+                await payload.member.remove_roles(year_roles[emoji_to_role[e]])
+                await post.remove_reaction(e, payload.member)
+
+        # Add new role
+        await payload.member.add_roles(year_roles[emoji_to_role[emoji]])
+
+@bot.event
+async def on_raw_reaction_remove(payload):
+    fizz = bot.get_guild(689295380474888194)
+    year_roles = [
+    discord.utils.get(fizz.roles, name="Pre-EngPhys"),
+    discord.utils.get(fizz.roles, name="2nd Year"),
+    discord.utils.get(fizz.roles, name="3rd Year"),
+    discord.utils.get(fizz.roles, name="4th Year"),
+    discord.utils.get(fizz.roles, name="5th Year +"),
+    discord.utils.get(fizz.roles, name="Alumnus")
+    ]
+    
+    emoji = payload.emoji.name
+    member = fizz.get_member(payload.user_id)
+
+    if (payload.message_id == role_message) :
+
+        # Remove role
+       
+        print(member)
+        await member.remove_roles(year_roles[emoji_to_role[emoji]])
+    
 
 
 # Basic Utility
 
+# Basic Command to let me post whatever I want using the bot,
+@bot.command()
+async def say(ctx):
+    if (ctx.message.author.id == 168388106049814528):
+        embed = discord.Embed(
+        description=ctx.message.content[8:],
+        colour=embed_colour,
+        )
+        await ctx.message.channel.send(embed=embed)
+
+# Customizable Command for me to do whatever the hell I want
+@bot.command()
+async def ac(ctx):
+    print("hi")
+
+        
 
 @bot.command(aliases=["shake", "shrek"])
 async def s(ctx):
@@ -86,7 +165,7 @@ async def s(ctx):
         original_channel = target.voice.channel
         await target.send("Wake up <@{}> >:(".format(target.id))
 
-        for x in range(4):
+        for _ in range(4):
             # Moves user back and fourth, muting/deafening each loop
             await target.edit(voice_channel=monkey, deafen=True, mute=True)
             await sleep(0.2)
@@ -117,7 +196,7 @@ async def airstrike(ctx):
         # current_channel = message.channel
         original_channel = target.voice.channel
 
-        for x in range(4):
+        for _ in range(4):
             await target.send(
                 "Wake up <@{}> >:(".format(target.id),
                 file=discord.File(open("media/blast.jpg", "rb")),
@@ -140,7 +219,7 @@ async def summon(ctx):
         await ctx.message.channel.send("Pinging")
         # current_channel = message.channel
 
-        for x in range(4):
+        for _ in range(4):
             await target.send(
                 "hey <@{}> get in discord".format(target.id),
                 file=discord.File(open("blast.jpg", "rb")),
@@ -207,7 +286,7 @@ async def echo(ctx):
 
     else:
 
-        for x in range(5):
+        for _ in range(5):
             await ctx.message.channel.send(msg)
             await sleep(0.5)
 
@@ -228,8 +307,9 @@ async def join(ctx):
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(
-            description="Ṭ̶̔ḩ̴̦̑͗͜e̶̦͛r̷̮̹̂ͅe̸̬͖͊͂ ̷̖̭̻̃̐ì̸̛̲̥͗ș̸̆ ̸͇̅n̵̢͓͚͗͛ǫ̴̣̅ ̸̘̌͆̑ḫ̶̫̰̑e̷̼̼̒l̸̲͍̯̈́͂͊p̵̋̂͋͜", colour=embed_colour
-        )
+        description="Ṭ̶̔ḩ̴̦̑͗͜e̶̦͛r̷̮̹̂ͅe̸̬͖͊͂ ̷̖̭̻̃̐ì̸̛̲̥͗ș̸̆ ̸͇̅n̵̢͓͚͗͛ǫ̴̣̅ ̸̘̌͆̑ḫ̶̫̰̑e̷̼̼̒l̸̲͍̯̈́͂͊p̵̋̂͋͜",
+        colour=embed_colour,
+    )
     await ctx.message.channel.send(embed=embed)
 
 
@@ -403,11 +483,10 @@ async def game(ctx):
         )
         await ctx.message.channel.send(embed=embed)
 
+
 @bot.command()
 async def iskevinbald(ctx):
-    embed = discord.Embed(
-            description="Yes", colour=embed_colour
-        )
+    embed = discord.Embed(description="Yes", colour=embed_colour)
     await ctx.message.channel.send(embed=embed)
 
 
