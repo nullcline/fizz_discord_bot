@@ -15,17 +15,30 @@ shake_room2 = 709974744329486346
 access_role = 689296629836415022
 gagged = []
 
+
 @bot.event
 async def on_ready():
+    get_year_roles()
     print("Running")
     
-
+def get_year_roles():
+    global fizz 
+    fizz = bot.get_guild(689295380474888194)
+    global year_roles
+    year_roles = [
+    discord.utils.get(fizz.roles, name="Pre-EngPhys"),
+    discord.utils.get(fizz.roles, name="2nd Year"),
+    discord.utils.get(fizz.roles, name="3rd Year"),
+    discord.utils.get(fizz.roles, name="4th Year"),
+    discord.utils.get(fizz.roles, name="5th Year +"),
+    discord.utils.get(fizz.roles, name="Alumnus")
+    ]
 
 # All functionality that checks every sent message.
 @bot.event
 async def on_message(message):
     if message.author.id in gagged:
-        await message.delete()
+        await message.delete()  
     await bot.process_commands(message)
 
     if message.content.upper() == "FUCK":
@@ -79,40 +92,24 @@ emoji_to_role = {
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    fizz = bot.get_guild(689295380474888194)
-    year_roles = [
-    discord.utils.get(fizz.roles, name="Pre-EngPhys"),
-    discord.utils.get(fizz.roles, name="2nd Year"),
-    discord.utils.get(fizz.roles, name="3rd Year"),
-    discord.utils.get(fizz.roles, name="4th Year"),
-    discord.utils.get(fizz.roles, name="5th Year +"),
-    discord.utils.get(fizz.roles, name="Alumnus")
-    ]
     
     emoji = payload.emoji.name
     post = await bot.get_channel(role_channel).fetch_message(role_message)
+    member = fizz.get_member(payload.user_id)
+
     if (payload.message_id == role_message) :
         
         # Remove all previous reactions
         for e in emojis:
-            if e != emoji:
-                await payload.member.remove_roles(year_roles[emoji_to_role[e]])
-                await post.remove_reaction(e, payload.member)
+            if e != emoji and year_roles[emoji_to_role[e]] in member.roles:
+                await member.remove_roles(year_roles[emoji_to_role[e]])
+                await post.remove_reaction(e, member)
 
         # Add new role
-        await payload.member.add_roles(year_roles[emoji_to_role[emoji]])
+        await member.add_roles(year_roles[emoji_to_role[emoji]])
 
 @bot.event
 async def on_raw_reaction_remove(payload):
-    fizz = bot.get_guild(689295380474888194)
-    year_roles = [
-    discord.utils.get(fizz.roles, name="Pre-EngPhys"),
-    discord.utils.get(fizz.roles, name="2nd Year"),
-    discord.utils.get(fizz.roles, name="3rd Year"),
-    discord.utils.get(fizz.roles, name="4th Year"),
-    discord.utils.get(fizz.roles, name="5th Year +"),
-    discord.utils.get(fizz.roles, name="Alumnus")
-    ]
     
     emoji = payload.emoji.name
     member = fizz.get_member(payload.user_id)
@@ -121,7 +118,7 @@ async def on_raw_reaction_remove(payload):
 
         # Remove role
        
-        print(member)
+        print(member + "removed role")
         await member.remove_roles(year_roles[emoji_to_role[emoji]])
     
 
@@ -362,13 +359,19 @@ async def get(ctx):
 async def on_member_join(member):
     general = bot.get_channel(729877762181169259)
     embed = discord.Embed(
-        description="**Welcome to the Fizz Discord <@{}>!**\n\nAssign yourself a role by typing: ```sudo year <Your Year #>```".format(
+        description="**Welcome to the Fizz Discord <@{}>!**\n\nAssign yourself a role by heading to #role-assignment".format(
+            member.id
+        ),
+        colour=embed_colour,
+    )
+    welcome = discord.Embed(
+        description="**<@{}> just joined the server".format(
             member.id
         ),
         colour=embed_colour,
     )
 
-    await general.send(embed=embed)
+    await general.send(embed=welcome)
     await member.send(embed=embed)
 
 
@@ -400,36 +403,36 @@ games = {
 }
 
 # Allows users to give themselves a year role. Usage: sudo year <1,2,3,4....>
-@bot.command()
-async def year(ctx):
+# @bot.command()
+# async def year(ctx):
 
-    year = int(float(ctx.message.content[9:]))
+#     year = int(float(ctx.message.content[9:]))
 
-    if year >= 5:
-        year = 5
+#     if year >= 5:
+#         year = 5
 
-    role = discord.utils.get(ctx.guild.roles, name=years[year])
-    role = discord.utils.get(ctx.guild.roles, name=years[year])
+#     role = discord.utils.get(ctx.guild.roles, name=years[year])
+#     role = discord.utils.get(ctx.guild.roles, name=years[year])
 
-    # Adding / removing year role
-    if role in ctx.message.author.roles:
-        await ctx.message.author.remove_roles(role)
-        embed = discord.Embed(
-            description="**You are no longer {}**".format(years[year]),
-            colour=embed_colour,
-        )
-        await ctx.message.channel.send(embed=embed)
-    else:
-        await ctx.message.author.add_roles(role)
-        embed = discord.Embed(
-            description="**You are now {}**".format(years[year]), colour=embed_colour
-        )
-        await ctx.message.channel.send(embed=embed)
+#     # Adding / removing year role
+#     if role in ctx.message.author.roles:
+#         await ctx.message.author.remove_roles(role)
+#         embed = discord.Embed(
+#             description="**You are no longer {}**".format(years[year]),
+#             colour=embed_colour,
+#         )
+#         await ctx.message.channel.send(embed=embed)
+#     else:
+#         await ctx.message.author.add_roles(role)
+#         embed = discord.Embed(
+#             description="**You are now {}**".format(years[year]), colour=embed_colour
+#         )
+#         await ctx.message.channel.send(embed=embed)
 
-    # Clear any other year roles (Probably could be handled differently but it is almost 2am rn)
-    for role in ctx.message.author.roles:
-        if role.name in list(rollover.keys()) and role.name != years[year]:
-            await ctx.message.author.remove_roles(role)
+#     # Clear any other year roles (Probably could be handled differently but it is almost 2am rn)
+#     for role in ctx.message.author.roles:
+#         if role.name in list(rollover.keys()) and role.name != years[year]:
+#             await ctx.message.author.remove_roles(role)
 
 
 # Updates year standing. Only Andrew can use this :) hi
