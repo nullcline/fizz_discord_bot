@@ -15,7 +15,7 @@ shake_room2 = 709974744329486346
 access_role = 689296629836415022
 gagged = []
 
-
+# Function that runs when the bot is fully ready (can access the cache)
 @bot.event
 async def on_ready():
     get_year_roles()
