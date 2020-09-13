@@ -118,7 +118,6 @@ async def on_raw_reaction_remove(payload):
 
         # Remove role
        
-        print(member + "removed role")
         await member.remove_roles(year_roles[emoji_to_role[emoji]])
     
 
