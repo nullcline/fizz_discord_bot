@@ -370,7 +370,7 @@ async def on_member_join(member):
         colour=embed_colour,
     )
 
-    await general.send(embed=welcome)
+    #await general.send(embed=welcome)
     await member.send(embed=embed)
 
 
