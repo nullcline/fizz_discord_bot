@@ -364,7 +364,7 @@ async def on_member_join(member):
         colour=embed_colour,
     )
     welcome = discord.Embed(
-        description="**<@{}> just joined the server".format(
+        description="<@{}> just joined the server".format(
             member.id
         ),
         colour=embed_colour,
