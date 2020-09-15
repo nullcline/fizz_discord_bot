@@ -3,6 +3,7 @@ from asyncio import sleep
 from discord.ext import commands
 from PIL import Image, ImageFont, ImageDraw
 
+
 # Setup
 bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
 bot.remove_command("help")
@@ -13,15 +14,16 @@ random.seed()
 shake_room1 = 709974781252075640
 shake_room2 = 709974744329486346
 access_role = 689296629836415022
+counting_room_id = 755275676311093369
 gagged = []
 
 # Function that runs when the bot is fully ready (can access the cache)
 @bot.event
 async def on_ready():
-    get_year_roles()
+    setup()
     print("Running")
     
-def get_year_roles():
+def setup():
     global fizz 
     fizz = bot.get_guild(689295380474888194)
     global year_roles
@@ -33,6 +35,8 @@ def get_year_roles():
     discord.utils.get(fizz.roles, name="5th Year +"),
     discord.utils.get(fizz.roles, name="Alumnus")
     ]
+    global counting_room
+    counting_room = bot.get_channel(counting_room_id)
 
 # All functionality that checks every sent message.
 @bot.event
@@ -49,13 +53,12 @@ async def on_message(message):
 
     if message.content.upper() == "PAIN":
 
-        f = open("paincount.txt", "r")
-        paincount = int(f.readline())
-        f.close()
-        f = open("paincount.txt", "w")
+        # Super hacky way of saving a single number persistenly
+        print(counting_room)
+        last_message = await counting_room.fetch_message(counting_room.last_message_id)
+        paincount = int(last_message.content)
         paincount += 1
-        f.write(str(paincount))
-        f.close()
+        await counting_room.send(paincount)
 
         pain_size = len(glob.glob("pain/*"))
         pain = random.uniform(0, pain_size - 1)
@@ -356,32 +359,13 @@ async def get(ctx):
 # Sends a welcome message to new members both in general chat and directly
 @bot.event
 async def on_member_join(member):
-    general = bot.get_channel(729877762181169259)
     embed = discord.Embed(
         description="**Welcome to the Fizz Discord <@{}>!**\n\nAssign yourself a role by heading to #role-assignment".format(
             member.id
         ),
         colour=embed_colour,
     )
-    welcome = discord.Embed(
-        description="<@{}> just joined the server".format(
-            member.id
-        ),
-        colour=embed_colour,
-    )
-
-    #await general.send(embed=welcome)
     await member.send(embed=embed)
-
-
-# Years for role manageament
-years = {
-    1: "Pre-EngPhys",
-    2: "2nd Year",
-    3: "3rd Year",
-    4: "4th Year",
-    5: "5th Year +",
-}
 
 # Years for updating standing
 rollover = {
@@ -400,39 +384,6 @@ games = {
     "SMASH": "Smash",
     "VALORANT": "Valorant",
 }
-
-# Allows users to give themselves a year role. Usage: sudo year <1,2,3,4....>
-# @bot.command()
-# async def year(ctx):
-
-#     year = int(float(ctx.message.content[9:]))
-
-#     if year >= 5:
-#         year = 5
-
-#     role = discord.utils.get(ctx.guild.roles, name=years[year])
-#     role = discord.utils.get(ctx.guild.roles, name=years[year])
-
-#     # Adding / removing year role
-#     if role in ctx.message.author.roles:
-#         await ctx.message.author.remove_roles(role)
-#         embed = discord.Embed(
-#             description="**You are no longer {}**".format(years[year]),
-#             colour=embed_colour,
-#         )
-#         await ctx.message.channel.send(embed=embed)
-#     else:
-#         await ctx.message.author.add_roles(role)
-#         embed = discord.Embed(
-#             description="**You are now {}**".format(years[year]), colour=embed_colour
-#         )
-#         await ctx.message.channel.send(embed=embed)
-
-#     # Clear any other year roles (Probably could be handled differently but it is almost 2am rn)
-#     for role in ctx.message.author.roles:
-#         if role.name in list(rollover.keys()) and role.name != years[year]:
-#             await ctx.message.author.remove_roles(role)
-
 
 # Updates year standing. Only Andrew can use this :) hi
 @bot.command()
