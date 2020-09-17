@@ -38,10 +38,10 @@ async def on_message(message):
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
     if message.content.upper() == "PAIN":
-        pain(message)
+        await pain(message)
 
 
-def pain(message):
+async def pain(message):
     # Super hacky way of saving a single number persistenly
         # Reads the most recent message from a certain channel to get the pain index
         # Does basic image processing to a random pain image and saves it as a temporary file 
