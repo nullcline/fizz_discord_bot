@@ -1,40 +1,3 @@
-# ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZI!,,,,,,,!!FZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZF..........,ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ,...........FZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZZIZZZZZZZZZZZZZZZZF............!ZZZZZZZZZZZZZZZZFIZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZI!,.!FIZZZZZZZZZZZZZ!............,ZZZZZZZZZZZZZF!!..!FZZZZZZZZZZZZZ
-# ZZZZZZZZZZZF!.......,!FZZZZZFF!!!..............,!!FFZZZZZF!,.......,!ZZZZZZZZZZZ
-# ZZZZZZZZZF!............,!!!..........................!!!..............!ZZZZZZZZZ
-# ZZZZZZZZZF........,!,...................................,!!!!!!!......!ZZZZZZZZZ
-# ZZZZZZZZZZI!.....F!,,!!!!!,.......................!!!!!!,......F....,FZZZZZZZZZZ
-# ZZZZZZZZZZZZF,...F........!!!!...................IZZF.........F,..,FZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZI!..,F,.........!!!!.............,!!!!!,........F!..!IZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZ!...,F!...........,!!!.......,!!!............,F,...!IZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZI!......!!.............,!!!..!!!,.............!!......,IZZZZZZZZZZZZ
-# ZZZZZZZZZZZZ!........,F!..............!FF!..............,F,........,IZZZZZZZZZZZ
-# ZZZZZZZZZZZF.....,!!!!!F!!!!...!!!!..!F!!F!!!!!!!,..!!!!F!!!!!!!....!FFFFIZZZZZZ
-# IFF!!!!!!,.......!ZZZZZZZZZI...FZZF..!ZZZZZZZZZZZ!.,ZZZZZZZZZZZZ,...........,!!F
-# !................!ZZZF.........FZZF........!FZZF!.........!ZZZF,...............!
-# !................!ZZZIFFFFF!...FZZF......,FZZI!.........!IZZF,.................,
-# !................!ZZZF!!!!!!...FZZF....,FZZI!.........!IZZF!...................,
-# !................!ZZZF.........FZZF...!ZZZF,,,,,,,..!FZZI!,,,,,,...............!
-# FF!!!!!,.........!ZZZF.........FZZF..FZZZZZZZZZZZF.!ZZZZZZZZZZZZ!....,!!!!FFFFIZ
-# ZZZZZZZZZZI!......!!!,.!!......,!!,..,!F!F!!!!!!!,..!!!!!F!!!!!!,...,ZZZZZZZZZZZ
-# ZZZZZZZZZZZZ,........,F!..............!!!!!...............!!!,......FZZZZZZZZZZZ
-# ZZZZZZZZZZZZF,......!!.............,!!!...!!!,............,ZZZ!....FZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZI!....!!...........,!!!.........!!!,..........!!F!...!ZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZF...F!.........,!!!...............!!!!..........!!..,FZZZZZZZZZZZZ
-# ZZZZZZZZZZZZF!...!,.......!!!!.....................!!!!,.......!!...!IZZZZZZZZZZ
-# ZZZZZZZZZZZF.....F,...!!!!!...........................,!!!!,....F....,FZZZZZZZZZ
-# ZZZZZZZZZF!.......!!!!,....................................!!!!!,......!ZZZZZZZZ
-# ZZZZZZZZZ!..............!!............................,!FF!...........,FZZZZZZZZ
-# ZZZZZZZZZZF!.........!FIZZIF!!,...................!!!FZZZZZF!,......,!ZZZZZZZZZZ
-# ZZZZZZZZZZZZF!,..,!FZZZZZZZZZZZZFF!............!IZZZZZZZZZZZZZIF!.!FZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZFFZZZZZZZZZZZZZZZZZF............FZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZI...........,ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ!..........FZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-# ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZF..........IZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-
 import discord, asyncio, random, glob, os
 from asyncio import sleep
 from discord.ext import commands
@@ -75,8 +38,11 @@ async def on_message(message):
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
     if message.content.upper() == "PAIN":
+        pain(message)
 
-        # Super hacky way of saving a single number persistenly
+
+def pain(message):
+    # Super hacky way of saving a single number persistenly
         # Reads the most recent message from a certain channel to get the pain index
         # Does basic image processing to a random pain image and saves it as a temporary file 
         # Please don't judge me for this
