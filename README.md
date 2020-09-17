@@ -15,3 +15,5 @@ This bot is intended to replace common bots like MEE6 or Dyno. It mostly has ent
 
 ## How to setup your own bot:
 [I pretty much exclusively used the documentation, which includes decent examples](https://discordpy.readthedocs.io/en/latest/api.html). I also consulted the discord.py Discord for some difficult debugging.
+
+There's also plenty of tutorials online for things like [hosting](https://www.youtube.com/watch?v=BPvg9bndP1U)
