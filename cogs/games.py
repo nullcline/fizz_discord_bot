@@ -11,6 +11,7 @@ games = {
     "MINECRAFT": "Minecraft",
     "SMASH": "Smash",
     "VALORANT": "Valorant",
+    "AU": "Among Us",
 }
 
 class GamesCog(commands.Cog):
@@ -20,7 +21,8 @@ class GamesCog(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def game(self, ctx):
-
+        # Finds requested game from dictionary then toggles the role onto the user
+        
         request = str(ctx.message.content[10:]).upper()
 
         role = discord.utils.get(ctx.guild.roles, name=games[request])
