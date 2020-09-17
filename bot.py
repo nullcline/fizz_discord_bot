@@ -42,7 +42,7 @@ from PIL import Image, ImageFont, ImageDraw
 
 # Using cogs for organization of bot (so this isn't a 500 line python script).
 # The more finicky functions are kept in this main script as 
-initial_extensions = ['cogs.roles','cogs.games']
+initial_extensions = ['cogs.roles','cogs.games','cogs.util']
 
 # Setup
 bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
