@@ -41,7 +41,7 @@ async def on_message(message):
     if message.content.upper() == "PAIN":
         await pain(message)
 
-    if message.content.upper() == "JOY":
+    if message.content.upper() in joy_list:
         await joy(message)
 
 
