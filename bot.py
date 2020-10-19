@@ -13,6 +13,7 @@ bot.remove_command("help")
 embed_colour = discord.Colour.red()
 random.seed()
 counting_room_id = 755275676311093369
+joy_list = ["joy", "blessed", "comfort", "happy", "relief", "wellness", "pog", ":)", "<3"]
 
 # Function that runs when the bot is fully ready (can access the cache)
 @bot.event
@@ -39,6 +40,9 @@ async def on_message(message):
 
     if message.content.upper() == "PAIN":
         await pain(message)
+
+    if message.content.upper() in joy_list:
+        await joy(message)
 
 
 async def pain(message):
@@ -77,6 +81,48 @@ async def pain(message):
             await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
 
         await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+
+async def joy(message):
+    # Super hacky way of saving a single number persistenly
+        # Reads the most recent message from a certain channel to get the pain index
+        # Does basic image processing to a random pain image and saves it as a temporary file 
+        # Please don't judge me for this
+        try:
+            last_message = await counting_room.fetch_message(counting_room.last_message_id)
+        except:
+            await message.channel.send("something really bad has happened, contact Andrew oh god oh fuck")
+            return 
+            
+        paincount = int(last_message.content)
+        paincount -= 1
+        await counting_room.send(paincount)
+
+        pain_size = len(glob.glob("joy/*"))
+        pain = random.uniform(0, pain_size - 1)
+
+        img = Image.open("joy/{}.png".format(int(pain)))
+        W, H = img.size
+        draw = ImageDraw.Draw(img)
+        font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
+
+        if paincount >= 0:
+            text = "pain: {}".format(paincount)
+        else:
+            text = "joy: {}".format(abs(paincount))
+
+        w, h = draw.textsize(text, font=font)
+        # Drawing text in middle and adding border
+        draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
+        draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
+        draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
+        draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
+        draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
+        img.save("joy/temp.png")
+
+        if paincount % 10 == 0:
+            await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
+
+        await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
 
 # TODO Update this
 @bot.command()
