@@ -53,10 +53,6 @@ async def pain(message):
             return 
             
         paincount = int(last_message.content)
-        
-        if paincount % 10 == 0:
-            await message.channel.send(file=discord.File(open("pain/main.mp4", "rb")))
-            
         paincount += 1
         await counting_room.send(paincount)
 
@@ -76,6 +72,9 @@ async def pain(message):
         draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("pain/temp.png")
+
+        if paincount % 10 == 0:
+            await message.channel.send(file=discord.File(open("pain/main.mp4", "rb")))
 
         await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
 
