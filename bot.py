@@ -74,7 +74,7 @@ async def pain(message):
         img.save("pain/temp.png")
 
         if paincount % 10 == 0:
-            await message.channel.send(file=discord.File(open("pain/main.mp4", "rb")))
+            await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
 
         await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
 
