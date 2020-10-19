@@ -53,6 +53,10 @@ async def pain(message):
             return 
             
         paincount = int(last_message.content)
+        
+        if paincount % 10 == 0:
+            await message.channel.send(file=discord.File(open("pain/main.mp4", "rb")))
+            
         paincount += 1
         await counting_room.send(paincount)
 
