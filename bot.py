@@ -13,7 +13,7 @@ bot.remove_command("help")
 embed_colour = discord.Colour.red()
 random.seed()
 counting_room_id = 755275676311093369
-joy_list = ["joy", "blessed", "comfort", "happy", "relief", "wellness", "pog", ":)", "<3"]
+joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 
 # Function that runs when the bot is fully ready (can access the cache)
 @bot.event
@@ -41,7 +41,7 @@ async def on_message(message):
     if message.content.upper() == "PAIN":
         await pain(message)
 
-    if message.content.upper() in joy_list:
+    if message.content.upper() == "JOY":
         await joy(message)
 
 
