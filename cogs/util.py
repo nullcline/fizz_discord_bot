@@ -6,7 +6,7 @@ embed_colour = discord.Colour.red()
 shake_room1 = 709974781252075640
 shake_room2 = 709974744329486346
 access_role = 689296629836415022
-
+joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 
 class UtilCog(commands.Cog):
     def __init__(self, bot):
