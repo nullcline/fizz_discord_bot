@@ -65,7 +65,7 @@ class UtilCog(commands.Cog):
 
         msg = ctx.message.content[9:]
 
-        if ctx.author.id == 722364047839723561 or msg.upper() == "FUCK":
+        if ctx.author.id == 722364047839723561 or msg.upper() == "FUCK" or msg.upper() == "PAIN" or msg.upper() in joy_list:
             pass
 
         else:
