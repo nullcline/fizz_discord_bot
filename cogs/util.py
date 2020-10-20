@@ -59,20 +59,20 @@ class UtilCog(commands.Cog):
             print("heh")
 
 
-    @commands.command()
-    @commands.guild_only()
-    async def echo(self, ctx):
+    # @commands.command()
+    # @commands.guild_only()
+    # async def echo(self, ctx):
 
-        msg = ctx.message.content[9:]
+    #     msg = ctx.message.content[9:]
 
-        if ctx.author.id == 722364047839723561 or msg.upper() == "FUCK" or msg.upper() == "PAIN" or msg.upper() in joy_list:
-            pass
+    #     if ctx.author.id == 722364047839723561 or msg.upper() == "FUCK" or msg.upper() == "PAIN" or msg.upper() in joy_list:
+    #         pass
 
-        else:
+    #     else:
 
-            for _ in range(5):
-                await ctx.message.channel.send(msg)
-                await sleep(0.5)
+    #         for _ in range(5):
+    #             await ctx.message.channel.send(msg)
+    #             await sleep(0.5)
 
 
     @commands.command(aliases=["j", "joi"])
