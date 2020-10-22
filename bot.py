@@ -67,7 +67,12 @@ async def pain(message):
         W, H = img.size
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
-        text = "pain: {}".format(paincount)
+        
+        if paincount >= 0:
+            text = "pain: {}".format(paincount)
+        else:
+            text = "joy: {}".format(abs(paincount))
+            
         w, h = draw.textsize(text, font=font)
         # Drawing text in middle and adding border
         draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
