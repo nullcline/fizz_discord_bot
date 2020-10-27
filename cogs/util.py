@@ -25,7 +25,7 @@ class UtilCog(commands.Cog):
     # Customizable Command for me to do whatever the hell I want
     @commands.command()
     @commands.is_owner()
-    async def ac(self, ctx):
+    async def acac(self, ctx):
         if (ctx.message.author.id == 168388106049814528):
             channel = self.bot.get_channel(int(ctx.message.content[9:28]))
             await channel.send(ctx.message.content[28:])
