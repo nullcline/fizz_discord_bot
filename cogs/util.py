@@ -27,7 +27,9 @@ class UtilCog(commands.Cog):
     @commands.is_owner()
     async def ac(self, ctx):
         if (ctx.message.author.id == 168388106049814528):
-            pass
+            channel = self.bot.get_channel(int(ctx.message.content[9:28]))
+            await channel.send(ctx.message.content[28:])
+            
 
         
     @commands.command(aliases=["shake", "airstrike", "nuke", "discombobulate", "summon"])
