@@ -227,7 +227,7 @@ async def checkTime():
 
     while(True):
         current_time = datetime.now().strftime("%H:%M:%S")
-        print(current_time)
+        #print(current_time)
 
         if(current_time == '11:59:55'):
             # Print all the pain to a file and send to counting channel
