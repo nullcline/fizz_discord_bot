@@ -38,7 +38,7 @@ async def on_message(message):
     if message.content.upper() == "SOBBING":
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
-    if message.content.upper() == "PAIN":
+    if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN":
         await pain(message)
 
     if message.content.upper() in joy_list:
@@ -86,6 +86,7 @@ async def pain(message):
             await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
 
         await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+        await sleep(5)
 
 async def joy(message):
     # Super hacky way of saving a single number persistenly
@@ -128,6 +129,7 @@ async def joy(message):
             await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
 
         await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
+        await sleep(5)
 
 # TODO Update this
 @bot.command()
