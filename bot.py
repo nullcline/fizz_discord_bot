@@ -118,7 +118,7 @@ async def joy(message):
 
         # Getting current pain 
         paincount = pain_list[list(pain_list.keys())[-1]]
-        paincount += 1
+        paincount -= 1
         pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(paincount))] = paincount
 
         # Choosing random image from folder
