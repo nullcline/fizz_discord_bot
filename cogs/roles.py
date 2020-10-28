@@ -51,7 +51,7 @@ class RolesCog(commands.Cog):
         # Probably need to add try/catch but it seems to work fine without it
         emoji = payload.emoji.name
         post = await self.bot.get_channel(role_channel).fetch_message(role_message)
-        member = self.fizz.get_member(payload.user_id)
+        member = await self.fizz.fetch_member(payload.user_id)
 
         if (payload.message_id == role_message) :
             
@@ -68,7 +68,7 @@ class RolesCog(commands.Cog):
     async def on_raw_reaction_remove(self, payload):
         # Simply removes the role that corresponds to the reaction that was removed from the message
         emoji = payload.emoji.name
-        member = self.fizz.get_member(payload.user_id)
+        member = await self.fizz.fetch_member(payload.user_id)
 
         if (payload.message_id == role_message) :
 
