@@ -51,6 +51,7 @@ async def on_ready():
     # Start new thread to run a timer
     thread = threading.Thread(target = await checkTime())
     thread.start()
+    thread.join()
 
     print("bot.py: Extensions loaded, Pain {} - Bot Ready".format(int(last_pain.content)))
 
