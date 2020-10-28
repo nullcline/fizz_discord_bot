@@ -1,18 +1,34 @@
-import discord, asyncio, random, glob, os
+import discord, asyncio, random, glob, os, threading
+
 from asyncio import sleep
-from discord.ext import commands
+from discord.ext import commands, tasks
 from PIL import Image, ImageFont, ImageDraw
+from datetime import datetime
 
 # Using cogs for organization of bot (so this isn't a 500 line python script).
-# The more finicky functions are kept in this main script as 
+# The more finicky functions are kept in this main script as I don't want to add more complexity on top of them.
+
+# Anything here is run before ```bot.run(str(token.readline()))``` is run, so you cannot access anything the bot usually can. 
+# If you want a channel or member object, you need to wait for on_ready() to be called or request it in on_ready()
+
+# Additionally, it is worth noting that everything pushed to Heroku is reverted to the state is was when pushed every 24 hours, making
+# persistent storage very annoying to deal with
+
+# For splitting the bot up
 initial_extensions = ['cogs.roles','cogs.games','cogs.util']
 
-# Setup
+# General Setup
 bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
 bot.remove_command("help")
 embed_colour = discord.Colour.red()
+
+# Pain related Setup
 random.seed()
+
+# Channel for storing the pain logs
 counting_room_id = 755275676311093369
+# Dictionary with date and time as key, with paincount as value
+pain_list = {}
 joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 
 # Function that runs when the bot is fully ready (can access the cache)
@@ -24,7 +40,19 @@ async def on_ready():
 
     for extension in initial_extensions:
         bot.load_extension(extension)
-    print("bot.py: Extensions loaded - Bot Ready")
+
+    # Finding what pain was sent last and adding it to pain_list, which should be empty
+    try:
+        last_pain = await counting_room.fetch_message(counting_room.last_message_id)
+        pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(int(last_pain.content)))] = int(last_pain.content)
+    except:
+        print("uh oh")
+
+    # Start new thread to run a timer
+    thread = threading.Thread(target = await checkTime())
+    thread.start()
+
+    print("bot.py: Extensions loaded, Pain {} - Bot Ready".format(int(last_pain.content)))
 
 # All functionality that checks every sent message.
 @bot.event
@@ -44,25 +72,19 @@ async def on_message(message):
     if message.content.upper() in joy_list:
         await joy(message)
 
-
 async def pain(message):
-    # Super hacky way of saving a single number persistenly
-        # Reads the most recent message from a certain channel to get the pain index
-        # Does basic image processing to a random pain image and saves it as a temporary file 
-        # Please don't judge me for this
-        try:
-            last_message = await counting_room.fetch_message(counting_room.last_message_id)
-        except:
-            await message.channel.send("something really bad has happened, contact Andrew oh god oh fuck")
-            return 
-            
-        paincount = int(last_message.content)
+    # Looks at last value in pain_list, adds 1 pain, and adds to the list.
+
+        # Getting current pain 
+        paincount = pain_list[list(pain_list.keys())[-1]]
         paincount += 1
-        await counting_room.send(paincount)
+        pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(paincount))] = paincount
 
+        # Choosing random image from folder
         pain_size = len(glob.glob("pain/*"))
-        pain = random.uniform(0, pain_size - 1)
+        pain = random.uniform(0, pain_size - 2)
 
+        # Writing pain on it
         img = Image.open("pain/{}.png".format(int(pain)))
         W, H = img.size
         draw = ImageDraw.Draw(img)
@@ -82,30 +104,28 @@ async def pain(message):
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("pain/temp.png")
 
-        if paincount % 10 == 0:
-            await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
+        # Sending 
+        # if paincount % 100 == 0:
+        #     await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
 
-        await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
-        await sleep(5)
+        try:
+            await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+        except:
+            print("Couldn't post idk mang")
 
 async def joy(message):
-    # Super hacky way of saving a single number persistenly
-        # Reads the most recent message from a certain channel to get the pain index
-        # Does basic image processing to a random pain image and saves it as a temporary file 
-        # Please don't judge me for this
-        try:
-            last_message = await counting_room.fetch_message(counting_room.last_message_id)
-        except:
-            await message.channel.send("something really bad has happened, contact Andrew oh god oh fuck")
-            return 
-            
-        paincount = int(last_message.content)
-        paincount -= 1
-        await counting_room.send(paincount)
+        # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
+        # Getting current pain 
+        paincount = pain_list[list(pain_list.keys())[-1]]
+        paincount += 1
+        pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(paincount))] = paincount
+
+        # Choosing random image from folder
         pain_size = len(glob.glob("joy/*"))
         pain = random.uniform(0, pain_size - 1)
 
+        # Writing joy on it
         img = Image.open("joy/{}.png".format(int(pain)))
         W, H = img.size
         draw = ImageDraw.Draw(img)
@@ -125,12 +145,12 @@ async def joy(message):
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("joy/temp.png")
 
-        if paincount % 10 == 0:
-            await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
-
-        await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
-        await sleep(5)
-
+        # Sending
+        try:
+            await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
+        except:
+            print("Couldn't post idk mang")
+    
 # TODO Update this
 @bot.command()
 async def help(ctx):
@@ -200,9 +220,33 @@ async def iskevinbald(ctx):
     embed = discord.Embed(description="Yes", colour=embed_colour)
     await ctx.message.channel.send(embed=embed)
 
+async def checkTime():
+    # Checking every second to see if it is 11:59:50, at which point the bot saves the day's pain and posts it in a server, 
+    # as a way to persist through Heroku's daily restart. Hidden at bottom of script so no one seems my while loop
+    print("Timer Started")
+
+    while(True):
+        current_time = datetime.now().strftime("%H:%M:%S")
+        print(current_time)
+
+        if(current_time == '11:59:55'):
+            # Print all the pain to a file and send to counting channel
+            # Send 1 message after that which includes only the latest value of pain
+            f = open(datetime.now().strftime("%d.%m.%Y.%H.%M.%S.txt"), "w+")
+            print("Compiling the day's pain")
+
+            for time in pain_list:
+                f.write("{}\n".format(time))
+
+            f.close()
+
+            # Making an event loop to run some async functions
+            await counting_room.send(file=discord.File(open(datetime.now().strftime("%d.%m.%Y.%H.%M.%S.txt"), "rb")))
+            await counting_room.send(pain_list[list(pain_list.keys())[-1]])
+        
+        await sleep(1)
 
 # Rudimentary token security measure. If it leaks I must have done something very wrong
 token = open("token.txt", "r")
 bot.run(str(token.readline()))
 token.close()
-
