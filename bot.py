@@ -72,10 +72,10 @@ async def on_message(message):
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
     if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN":
-        await pain_message(message, pain)
+        pain = await pain_message(message, pain)
 
     if message.content.upper() in joy_list:
-        await joy_message(message, pain)
+        pain = await joy_message(message, pain)
 
 async def pain_message(message, pain):
     # Looks at last value in pain_list, adds 1 pain, and adds to the list.
@@ -113,6 +113,8 @@ async def pain_message(message, pain):
         except:
             print("Couldn't post idk mang")
 
+        return pain
+
 async def joy_message(message, pain):
         # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
@@ -149,6 +151,8 @@ async def joy_message(message, pain):
             await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
         except:
             print("Couldn't post idk mang")
+        
+        return pain
     
 # TODO Update this
 @bot.command()
