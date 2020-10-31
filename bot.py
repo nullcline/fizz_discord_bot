@@ -230,7 +230,7 @@ async def checkTime():
         current_time = datetime.now().strftime("%H:%M:%S")
         #print(current_time)
 
-        if(current_time == '11:59:55'):
+        if(current_time == '11:59:45'):
             # Print all the pain to a file and send to counting channel
             # Send 1 message after that which includes only the latest value of pain
             f = open(datetime.now().strftime("%d.%m.%Y.%H.%M.%S.txt"), "w+")
