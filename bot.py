@@ -28,6 +28,7 @@ random.seed()
 cluster = MongoClient("mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority")
 db = cluster["discord"]
 collection = db["pain"]
+pain = []
 
 # Channel for storing the pain logs
 counting_room_id = 755275676311093369
@@ -39,7 +40,6 @@ joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 async def on_ready():
     
     global counting_room
-    global pain 
     counting_room = bot.get_channel(counting_room_id)
 
     for extension in initial_extensions:
@@ -48,7 +48,7 @@ async def on_ready():
     # Finding what pain was sent last and adding it to pain_list, which should be empty
     try:
         last_pain = await counting_room.fetch_message(counting_room.last_message_id)
-        pain = int(last_pain.content)
+        pain.append(int(last_pain.content))
     except:
         print("uh oh")
 
@@ -72,17 +72,18 @@ async def on_message(message):
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
     if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN":
-        pain = await pain_message(message, pain)
+        await pain_message(message)
 
     if message.content.upper() in joy_list:
-        pain = await joy_message(message, pain)
+        await joy_message(message)
 
-async def pain_message(message, pain):
+async def pain_message(message):
     # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
         # Updating pain and sending to mongoDB
-        pain += 1
-        collection.insert_one({"pain": pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
+        new_pain = pain[-1] + 1
+        pain.append(new_pain)
+        collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
 
         # Choosing random image from folder
         pain_folder = len(glob.glob("pain/*"))
@@ -94,10 +95,10 @@ async def pain_message(message, pain):
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
         
-        if pain >= 0:
-            text = "pain: {}".format(pain)
+        if new_pain >= 0:
+            text = "pain: {}".format(new_pain)
         else:
-            text = "joy: {}".format(abs(pain))
+            text = "joy: {}".format(abs(new_pain))
             
         w, h = draw.textsize(text, font=font)
         # Drawing text in middle and adding border
@@ -113,14 +114,13 @@ async def pain_message(message, pain):
         except:
             print("Couldn't post idk mang")
 
-        return pain
-
-async def joy_message(message, pain):
+async def joy_message(message):
         # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
         # Updating pain and sending to mongoDB 
-        pain -= 1
-        collection.insert_one({"pain": pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
+        new_pain = pain[-1] - 1
+        pain.append(new_pain)
+        collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
 
         # Choosing random image from folder
         pain_folder = len(glob.glob("joy/*"))
@@ -132,10 +132,10 @@ async def joy_message(message, pain):
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
 
-        if pain >= 0:
-            text = "pain: {}".format(pain)
+        if new_pain >= 0:
+            text = "pain: {}".format(new_pain)
         else:
-            text = "joy: {}".format(abs(pain))
+            text = "joy: {}".format(abs(new_pain))
 
         w, h = draw.textsize(text, font=font)
         # Drawing text in middle and adding border
@@ -151,8 +151,7 @@ async def joy_message(message, pain):
             await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
         except:
             print("Couldn't post idk mang")
-        
-        return pain
+
     
 # TODO Update this
 @bot.command()
