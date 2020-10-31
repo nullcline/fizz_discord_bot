@@ -1,5 +1,6 @@
 import discord, asyncio, random, glob, os, threading
 
+from pymongo import MongoClient
 from asyncio import sleep
 from discord.ext import commands, tasks
 from PIL import Image, ImageFont, ImageDraw
@@ -22,13 +23,15 @@ bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
 bot.remove_command("help")
 embed_colour = discord.Colour.red()
 
-# Pain related Setup
+# Pain related Setup. I know the mongoDB password is just sitting there but like... the data is literally how many times we've typed "pain" so idc lole
 random.seed()
+cluster = MongoClient("mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority")
+db = cluster["discord"]
+collection = db["pain"]
 
 # Channel for storing the pain logs
 counting_room_id = 755275676311093369
 # Dictionary with date and time as key, with paincount as value
-pain_list = {}
 joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 
 # Function that runs when the bot is fully ready (can access the cache)
@@ -36,6 +39,7 @@ joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 async def on_ready():
     
     global counting_room
+    global pain 
     counting_room = bot.get_channel(counting_room_id)
 
     for extension in initial_extensions:
@@ -44,7 +48,7 @@ async def on_ready():
     # Finding what pain was sent last and adding it to pain_list, which should be empty
     try:
         last_pain = await counting_room.fetch_message(counting_room.last_message_id)
-        pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(int(last_pain.content)))] = int(last_pain.content)
+        pain = int(last_pain.content)
     except:
         print("uh oh")
 
@@ -68,33 +72,32 @@ async def on_message(message):
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
     if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN":
-        await pain(message)
+        await pain_message(message, pain)
 
     if message.content.upper() in joy_list:
-        await joy(message)
+        await joy_message(message, pain)
 
-async def pain(message):
+async def pain_message(message, pain):
     # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
-        # Getting current pain 
-        paincount = pain_list[list(pain_list.keys())[-1]]
-        paincount += 1
-        pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(paincount))] = paincount
+        # Updating pain and sending to mongoDB
+        pain += 1
+        collection.insert_one({"pain": pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
 
         # Choosing random image from folder
-        pain_size = len(glob.glob("pain/*"))
-        pain = random.uniform(0, pain_size - 2)
+        pain_folder = len(glob.glob("pain/*"))
+        pain_pic = random.uniform(0, pain_folder - 2)
 
         # Writing pain on it
-        img = Image.open("pain/{}.png".format(int(pain)))
+        img = Image.open("pain/{}.png".format(int(pain_pic)))
         W, H = img.size
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
         
-        if paincount >= 0:
-            text = "pain: {}".format(paincount)
+        if pain >= 0:
+            text = "pain: {}".format(pain)
         else:
-            text = "joy: {}".format(abs(paincount))
+            text = "joy: {}".format(abs(pain))
             
         w, h = draw.textsize(text, font=font)
         # Drawing text in middle and adding border
@@ -105,37 +108,32 @@ async def pain(message):
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("pain/temp.png")
 
-        # Sending 
-        # if paincount % 100 == 0:
-        #     await message.channel.send(file=discord.File(open("pain/pain.mp4", "rb")))
-
         try:
             await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
         except:
             print("Couldn't post idk mang")
 
-async def joy(message):
+async def joy_message(message, pain):
         # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
-        # Getting current pain 
-        paincount = pain_list[list(pain_list.keys())[-1]]
-        paincount -= 1
-        pain_list[datetime.now().strftime("%d/%m/%Y %H:%M:%S:{}".format(paincount))] = paincount
+        # Updating pain and sending to mongoDB 
+        pain -= 1
+        collection.insert_one({"pain": pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
 
         # Choosing random image from folder
-        pain_size = len(glob.glob("joy/*"))
-        pain = random.uniform(0, pain_size - 1)
+        pain_folder = len(glob.glob("joy/*"))
+        pain_pic = random.uniform(0, pain_folder - 1)
 
         # Writing joy on it
-        img = Image.open("joy/{}.png".format(int(pain)))
+        img = Image.open("joy/{}.png".format(int(pain_pic)))
         W, H = img.size
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
 
-        if paincount >= 0:
-            text = "pain: {}".format(paincount)
+        if pain >= 0:
+            text = "pain: {}".format(pain)
         else:
-            text = "joy: {}".format(abs(paincount))
+            text = "joy: {}".format(abs(pain))
 
         w, h = draw.textsize(text, font=font)
         # Drawing text in middle and adding border
@@ -230,20 +228,9 @@ async def checkTime():
         current_time = datetime.now().strftime("%H:%M:%S")
         #print(current_time)
 
-        if(current_time == '19:59:45'):
-            # Print all the pain to a file and send to counting channel
-            # Send 1 message after that which includes only the latest value of pain
-            f = open(datetime.now().strftime("%d.%m.%Y.%H.%M.%S.txt"), "w+")
-            print("Compiling the day's pain")
-
-            for time in pain_list:
-                f.write("{}\n".format(time))
-
-            f.close()
-
-            # Making an event loop to run some async functions
-            await counting_room.send(file=discord.File(open(datetime.now().strftime("%d.%m.%Y.%H.%M.%S.txt"), "rb")))
-            await counting_room.send(pain_list[list(pain_list.keys())[-1]])
+        if(current_time == '19:59:55'):
+            # Send pain value so the bot can read it on refresh
+            await counting_room.send(pain)
         
         await sleep(1)
 
