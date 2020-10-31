@@ -3,4 +3,4 @@ async-timeout==3.0.1
 pynacl
 Pillow
 pymongo
-dnspython=2.0.0
+dnspython==2.0.0
