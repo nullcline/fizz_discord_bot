@@ -109,10 +109,7 @@ async def pain_message(message):
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("pain/temp.png")
 
-        try:
-            await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
-        except:
-            print("Couldn't post idk mang")
+        await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
 
 async def joy_message(message):
         # Looks at last value in pain_list, adds 1 pain, and adds to the list.
@@ -146,11 +143,7 @@ async def joy_message(message):
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("joy/temp.png")
 
-        # Sending
-        try:
-            await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
-        except:
-            print("Couldn't post idk mang")
+        await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
 
     
 # TODO Update this
@@ -231,9 +224,9 @@ async def checkTime():
         current_time = datetime.now().strftime("%H:%M:%S")
         #print(current_time)
 
-        if(current_time == '23:59:55'):
+        if(current_time == '07:59:55'):
             # Send pain value so the bot can read it on refresh
-            await counting_room.send(pain)
+            await counting_room.send(pain[-1])
         
         await sleep(1)
 
