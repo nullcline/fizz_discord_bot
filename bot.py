@@ -25,9 +25,9 @@ embed_colour = discord.Colour.red()
 
 # Pain related Setup. I know the mongoDB password is just sitting there but like... the data is literally how many times we've typed "pain" so idc lole
 random.seed()
-cluster = MongoClient("mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority")
-db = cluster["discord"]
-collection = db["pain"]
+# cluster = MongoClient("mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority")
+# db = cluster["discord"]
+# collection = db["pain"]
 pain = []
 
 # Channel for storing the pain logs
@@ -83,7 +83,7 @@ async def pain_message(message):
         # Updating pain and sending to mongoDB
         new_pain = pain[-1] + 1
         pain.append(new_pain)
-        collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
+        #collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
 
         # Choosing random image from folder
         pain_folder = len(glob.glob("pain/*"))
@@ -117,7 +117,7 @@ async def joy_message(message):
         # Updating pain and sending to mongoDB 
         new_pain = pain[-1] - 1
         pain.append(new_pain)
-        collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
+        #collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
 
         # Choosing random image from folder
         pain_folder = len(glob.glob("joy/*"))
