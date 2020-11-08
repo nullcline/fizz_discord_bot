@@ -224,7 +224,7 @@ async def checkTime():
         current_time = datetime.now().strftime("%H:%M:%S")
         #print(current_time)
 
-        if(current_time == '23:59:55'):
+        if(current_time == '07:59:55'):
             # Send pain value so the bot can read it on refresh
             await counting_room.send(pain[-1])
         
