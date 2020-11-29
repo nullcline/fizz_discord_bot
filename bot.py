@@ -71,7 +71,7 @@ async def on_message(message):
     if message.content.upper() == "SOBBING":
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
-    if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN" or message.content == '🍞' or message.content == '🥖':
+    if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN" or message.content == '🍞' or message.content == '🥖' or message.content.upper() == "PAIN PEKO":
         await pain_message(message)
 
     if message.content.upper() in joy_list:
