@@ -41,6 +41,8 @@ async def on_ready():
     
     global counting_room
     counting_room = bot.get_channel(counting_room_id)
+    start_room = bot.get_channel(758412054125346826)
+    await start_room.send("Started :D")
 
     for extension in initial_extensions:
         bot.load_extension(extension)
