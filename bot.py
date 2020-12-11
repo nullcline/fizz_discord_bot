@@ -111,6 +111,9 @@ async def pain_message(message):
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("pain/temp.png")
 
+        if (new_pain % 10 == 0):
+            await counting_room.send(pain[-1])
+            
         if (new_pain % 100 == 0): 
             await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
 
@@ -147,6 +150,9 @@ async def joy_message(message):
         draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
         draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
         img.save("joy/temp.png")
+
+        if (new_pain % 10 == 0):
+            await counting_room.send(pain[-1])
 
         if (new_pain % 100 == 0): 
             await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
