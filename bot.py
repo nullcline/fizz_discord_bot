@@ -1,4 +1,4 @@
-import discord, asyncio, random, glob, os, threading
+import discord, asyncio, random, glob, os, threading, argparse, sys, time
 
 from pymongo import MongoClient
 from asyncio import sleep
@@ -12,8 +12,7 @@ from datetime import datetime
 # Anything here is run before ```bot.run(str(token.readline()))``` is run, so you cannot access anything the bot usually can. 
 # If you want a channel or member object, you need to wait for on_ready() to be called or request it in on_ready()
 
-# Additionally, it is worth noting that everything pushed to Heroku is reverted to the state is was when pushed every 24 hours, making
-# persistent storage very annoying to deal with
+# This regression of code won't work for Heroku, for reasons you'd understand if you've used Heroku to host a bot.
 
 # For splitting the bot up
 initial_extensions = ['cogs.roles','cogs.games','cogs.util']
@@ -28,43 +27,34 @@ random.seed()
 cluster = MongoClient("mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority")
 db = cluster["discord"]
 collection = db["pain"]
-pain = []
 
-# Channel for storing the pain logs
-counting_room_id = 755275676311093369
-# Dictionary with date and time as key, with paincount as value
+# Pain
+pain_queue_running = False
+order = 0
+
+# Trigger words for pain/joy
+pain_list = ["PAIN", "AGONY", "SUFFERING", "DESPAIR", "CHAIN", "🍞", "🥖", "PAIN PEKO"]
 joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
+
+with open('pain.txt', 'r') as painfile:
+    pain = int(painfile.readline())
 
 # Function that runs when the bot is fully ready (can access the cache)
 @bot.event
 async def on_ready():
-    
-    global counting_room
-    counting_room = bot.get_channel(counting_room_id)
-    start_room = bot.get_channel(758412054125346826)
-    await start_room.send("Started :D")
 
+    # Load the cogs
     for extension in initial_extensions:
         bot.load_extension(extension)
 
-    # Finding what pain was sent last and adding it to pain_list, which should be empty
-    try:
-        last_pain = await counting_room.fetch_message(counting_room.last_message_id)
-        pain.append(int(last_pain.content))
-    except:
-        print("uh oh")
-
-    # Start new thread to run a timer
-    thread = threading.Thread(target = await checkTime())
-    thread.start()
-    thread.join()
-
-    print("bot.py: Extensions loaded, Pain {} - Bot Ready".format(int(last_pain.content)))
+    print("bot.py: Extensions loaded, Bot Ready")
 
 # All functionality that checks every sent message.
 @bot.event
 async def on_message(message):
     
+    global pain_queue_running
+    # Allows other message based stuff to work
     await bot.process_commands(message)
 
     if message.content.upper() == "FUCK":
@@ -73,93 +63,115 @@ async def on_message(message):
     if message.content.upper() == "SOBBING":
         await message.channel.send(file=discord.File(open("media/sobbing.png", "rb")))
 
-    if message.content.upper() == "PAIN" or message.content.upper() == "CHAIN" or message.content == '🍞' or message.content == '🥖' or message.content.upper() == "PAIN PEKO":
+    if message.content.upper() in pain_list:
+        # creates a new pain image
         await pain_message(message)
+        # start thread that sends pain on a delay
+        if not pain_queue_running:
+            pain_queue_running = True
+            await pain_queue(message)
 
     if message.content.upper() in joy_list:
+        # same
         await joy_message(message)
+        if not pain_queue_running:
+            pain_queue_running = True
+            await pain_queue(message)
 
 async def pain_message(message):
-    # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
-        # Updating pain and sending to mongoDB
-        new_pain = pain[-1] + 1
-        pain.append(new_pain)
-        collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
+    # Updating pain and sending to mongoDB
+    global pain
+    global order
+    pain += 1
+    order += 1
 
-        # Choosing random image from folder
-        pain_folder = len(glob.glob("pain/*"))
-        pain_pic = random.uniform(0, pain_folder - 1)
+    date = int(time.time())
+    collection.insert_one({"pain": pain, "time": date, "user_id": message.author.id})
 
-        # Writing pain on it
-        img = Image.open("pain/{}.png".format(int(pain_pic)))
-        W, H = img.size
-        draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
+    # Choosing random image from folder
+    pain_folder = len(glob.glob("media/pain/*"))
+    pain_pic = random.uniform(0, pain_folder)
+
+    # Writing pain on it
+    img = Image.open("media/pain/{}.png".format(int(pain_pic)))
+    W, H = img.size
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
+    
+    if pain >= 0:
+        text = "pain: {}".format(pain)
+    else:
+        text = "joy: {}".format(abs(pain))
         
-        if new_pain >= 0:
-            text = "pain: {}".format(new_pain)
-        else:
-            text = "joy: {}".format(abs(new_pain))
-            
-        w, h = draw.textsize(text, font=font)
-        # Drawing text in middle and adding border
-        draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
-        img.save("pain/temp.png")
+    w, h = draw.textsize(text, font=font)
+    # Drawing text in middle and adding border
+    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
+    img.save(f"media/queue/{date}{order}.png")
+        
+    if (pain % 100 == 0): 
+        await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
 
-        if (new_pain % 10 == 0):
-            await counting_room.send(pain[-1])
-            
-        if (new_pain % 100 == 0): 
-            await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
-
-        await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+    #await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
 
 async def joy_message(message):
-        # Looks at last value in pain_list, adds 1 pain, and adds to the list.
 
-        # Updating pain and sending to mongoDB 
-        new_pain = pain[-1] - 1
-        pain.append(new_pain)
-        collection.insert_one({"pain": new_pain, "time": datetime.now().strftime("%H:%M:%S"), "user_id": message.author.id})
+    # Updating pain and sending to mongoDB 
+    global pain
+    global order
+    pain -= 1
+    order += 1
 
-        # Choosing random image from folder
-        pain_folder = len(glob.glob("joy/*"))
-        pain_pic = random.uniform(0, pain_folder - 1)
+    date = int(time.time())
+    collection.insert_one({"pain": pain, "time": date, "user_id": message.author.id})
 
-        # Writing joy on it
-        img = Image.open("joy/{}.png".format(int(pain_pic)))
-        W, H = img.size
-        draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
+    # Choosing random image from folder
+    pain_folder = len(glob.glob("media/joy/*"))
+    pain_pic = random.uniform(0, pain_folder)
 
-        if new_pain >= 0:
-            text = "pain: {}".format(new_pain)
-        else:
-            text = "joy: {}".format(abs(new_pain))
+    # Writing joy on it
+    img = Image.open("media/joy/{}.png".format(int(pain_pic)))
+    W, H = img.size
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
 
-        w, h = draw.textsize(text, font=font)
-        # Drawing text in middle and adding border
-        draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-        draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
-        img.save("joy/temp.png")
+    if pain >= 0:
+        text = "pain: {}".format(pain)
+    else:
+        text = "joy: {}".format(abs(pain))
 
-        if (new_pain % 10 == 0):
-            await counting_room.send(pain[-1])
+    w, h = draw.textsize(text, font=font)
+    # Drawing text in middle and adding border
+    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
+    img.save(f"media/queue/{date}{order}.png")
 
-        if (new_pain % 100 == 0): 
-            await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
+    if (pain % 100 == 0): 
+        await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
 
-        await message.channel.send(file=discord.File(open("joy/temp.png", "rb")))
+async def pain_queue(message):
 
+    global pain_queue_running
+    while(len(glob.glob("media/queue/*")) > 0):
+        # make a list of the queue files, then find the oldest one. 
+        oldest = os.listdir('media/queue')[0]
     
+        # post and remove the picture
+        with open(f"media/queue/{oldest}", "rb") as painfile:
+            await message.channel.send(file=discord.File(painfile))
+
+        os.remove(f'media/queue/{oldest}')
+        await sleep(1)
+
+    pain_queue_running = False
+
 # TODO Update this
 @bot.command()
 async def help(ctx):
@@ -229,6 +241,15 @@ async def iskevinbald(ctx):
     embed = discord.Embed(description="Yes", colour=embed_colour)
     await ctx.message.channel.send(embed=embed)
 
+
+# quick parser to make development a bit easier
+def build_argparser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dev", type=bool, default=False, help="there is no help")
+
+    return parser
+
+# make sure to set cron job at 5am to start script
 async def checkTime():
     # Checking every second to see if it is 11:59:50, at which point the bot saves the day's pain and posts it in a server, 
     # as a way to persist through Heroku's daily restart. Hidden at bottom of script so no one seems my while loop
@@ -236,15 +257,39 @@ async def checkTime():
 
     while(True):
         current_time = datetime.now().strftime("%H:%M:%S")
-        #print(current_time)
 
-        if(current_time == '07:59:55'):
-            # Send pain value so the bot can read it on refresh
-            await counting_room.send(pain[-1])
+        if(current_time == '04:59:45'):
+            # Print all the pain to a file and send to counting channel
+            # Send 1 message after that which includes only the latest value of pain
+           
+            print("Compiling the day's pain")
+            with open('pain.txt', 'w') as painfile:
+                painfile.write(str(pain))
+
+            exit()
+
         
         await sleep(1)
 
-# Rudimentary token security measure. If it leaks I must have done something very wrong
-token = open("token.txt", "r")
-bot.run(str(token.readline()))
-token.close()
+@bot.command()
+async def force_quit(ctx):
+    if (ctx.message.author.id == 168388106049814528):
+        with open('pain.txt', 'w') as painfile:
+            painfile.write(str(pain))
+            exit()
+
+def main():
+    args = build_argparser().parse_args()
+
+    # Rudimentary token security measure. If it leaks I must have done something very wrong
+    if args.dev:
+        token = open("devtoken.txt", "r")
+    else:
+        token = open("token.txt", "r")
+
+    bot.run(str(token.readline()))
+    token.close()
+
+
+if __name__ == '__main__':
+    sys.exit(main() or 0)
