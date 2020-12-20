@@ -15,7 +15,7 @@ from datetime import datetime
 # This regression of code won't work for Heroku, for reasons you'd understand if you've used Heroku to host a bot.
 
 # For splitting the bot up
-initial_extensions = ['cogs.roles','cogs.games','cogs.util']
+initial_extensions = ['cogs.roles','cogs.games','cogs.util', 'cogs.music']
 
 # General Setup
 bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
@@ -31,6 +31,7 @@ collection = db["pain"]
 # Pain
 pain_queue_running = False
 order = 0
+queue = {}
 
 # Trigger words for pain/joy
 pain_list = ["PAIN", "AGONY", "SUFFERING", "DESPAIR", "CHAIN", "🍞", "🥖", "PAIN PEKO"]
@@ -69,22 +70,25 @@ async def on_message(message):
         # start thread that sends pain on a delay
         if not pain_queue_running:
             pain_queue_running = True
-            await pain_queue(message)
+            await pain_queue()
 
     if message.content.upper() in joy_list:
         # same
         await joy_message(message)
         if not pain_queue_running:
             pain_queue_running = True
-            await pain_queue(message)
+            await pain_queue()
 
 async def pain_message(message):
 
     # Updating pain and sending to mongoDB
     global pain
     global order
+    global queue
+
     pain += 1
     order += 1
+    queue[order] = message.channel
 
     date = int(time.time())
     collection.insert_one({"pain": pain, "time": date, "user_id": message.author.id})
@@ -106,12 +110,8 @@ async def pain_message(message):
         
     w, h = draw.textsize(text, font=font)
     # Drawing text in middle and adding border
-    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
-    img.save(f"media/queue/{date}{order}.png")
+    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(255, 0, 0))
+    img.save(f"media/queue/{order}.png")
         
     if (pain % 100 == 0): 
         await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
@@ -123,8 +123,11 @@ async def joy_message(message):
     # Updating pain and sending to mongoDB 
     global pain
     global order
+    global queue
+
     pain -= 1
     order += 1
+    queue[order] = message.channel
 
     date = int(time.time())
     collection.insert_one({"pain": pain, "time": date, "user_id": message.author.id})
@@ -145,30 +148,28 @@ async def joy_message(message):
         text = "joy: {}".format(abs(pain))
 
     w, h = draw.textsize(text, font=font)
-    # Drawing text in middle and adding border
-    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2+2,(H-h)/2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2+2,(H-h)/2+2), text, font=font, fill=(0, 0, 0))
-    draw.text(((W-w)/2+1,(H-h)/2+1), text, (255, 255, 255), font=font)
-    img.save(f"media/queue/{date}{order}.png")
+    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(255, 0, 0))
+    img.save(f"media/queue/{order}.png")
 
     if (pain % 100 == 0): 
         await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
 
-async def pain_queue(message):
+async def pain_queue():
 
     global pain_queue_running
-    while(len(glob.glob("media/queue/*")) > 0):
-        # make a list of the queue files, then find the oldest one. 
-        oldest = os.listdir('media/queue')[0]
+    global queue
+    
+    while(len(queue) > 0):
+        
+        oldest = min(queue.keys())
     
         # post and remove the picture
-        with open(f"media/queue/{oldest}", "rb") as painfile:
-            await message.channel.send(file=discord.File(painfile))
+        with open(f"media/queue/{oldest}.png", "rb") as painfile:
+            await queue[oldest].send(file=discord.File(painfile))
 
-        os.remove(f'media/queue/{oldest}')
-        await sleep(1)
+        del queue[oldest]
+        os.remove(f'media/queue/{oldest}.png')
+        time.sleep(1)
 
     pain_queue_running = False
 
@@ -234,7 +235,7 @@ async def on_member_join(member):
     )
     await member.send(embed=embed)
 
-@bot.command()
+@bot.command(brief='Checks if Kevin Lin is bald')
 async def iskevinbald(ctx):
     # Essential command, do not remove
 
@@ -271,7 +272,7 @@ async def checkTime():
         
         await sleep(1)
 
-@bot.command()
+@bot.command(brief='Admin/Development Command')
 async def force_quit(ctx):
     if (ctx.message.author.id == 168388106049814528):
         with open('pain.txt', 'w') as painfile:
