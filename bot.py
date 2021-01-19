@@ -9,13 +9,13 @@ from datetime import datetime
 # Using cogs for organization of bot (so this isn't a 500 line python script).
 # The more finicky functions are kept in this main script as I don't want to add more complexity on top of them.
 
-# Anything here is run before ```bot.run(str(token.readline()))``` is run, so you cannot access anything the bot usually can. 
+# Anything here is run before ```bot.run(str(token.readline()))``` is run, so you cannot access anything the bot usually can.
 # If you want a channel or member object, you need to wait for on_ready() to be called or request it in on_ready()
 
 # This regression of code won't work for Heroku, for reasons you'd understand if you've used Heroku to host a bot.
 
 # For splitting the bot up
-initial_extensions = ['cogs.roles','cogs.games','cogs.util', 'cogs.music']
+initial_extensions = ["cogs.roles", "cogs.games", "cogs.util", "cogs.music"]
 
 # General Setup
 bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
@@ -24,7 +24,9 @@ embed_colour = discord.Colour.red()
 
 # Pain related Setup. I know the mongoDB password is just sitting there but like... the data is literally how many times we've typed "pain" so idc lole
 random.seed()
-cluster = MongoClient("mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority")
+cluster = MongoClient(
+    "mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority"
+)
 db = cluster["discord"]
 collection = db["pain"]
 
@@ -37,7 +39,7 @@ queue = {}
 pain_list = ["PAIN", "AGONY", "SUFFERING", "DESPAIR", "CHAIN", "🍞", "🥖", "PAIN PEKO"]
 joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 
-with open('pain.txt', 'r') as painfile:
+with open("pain.txt", "r") as painfile:
     pain = int(painfile.readline())
 
 # Function that runs when the bot is fully ready (can access the cache)
@@ -48,12 +50,17 @@ async def on_ready():
     for extension in initial_extensions:
         bot.load_extension(extension)
 
+    thread = threading.Thread(target=await checkTime())
+    thread.start()
+    thread.join()
+
     print("bot.py: Extensions loaded, Bot Ready")
+
 
 # All functionality that checks every sent message.
 @bot.event
 async def on_message(message):
-    
+
     global pain_queue_running
     # Allows other message based stuff to work
     await bot.process_commands(message)
@@ -79,6 +86,7 @@ async def on_message(message):
             pain_queue_running = True
             await pain_queue()
 
+
 async def pain_message(message):
 
     # Updating pain and sending to mongoDB
@@ -102,25 +110,30 @@ async def pain_message(message):
     W, H = img.size
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype("media/helvetica.ttf", int(H / 7))
-    
+
     if pain >= 0:
         text = "pain: {}".format(pain)
     else:
         text = "joy: {}".format(abs(pain))
-        
+
     w, h = draw.textsize(text, font=font)
     # Drawing text in middle and adding border
-    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(255, 0, 0))
+    draw.text(((W - w) / 2, (H - h) / 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2 + 2, (H - h) / 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2, (H - h) / 2 + 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2 + 2, (H - h) / 2 + 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2 + 1, (H - h) / 2 + 1), text, (255, 255, 255), font=font)
     img.save(f"media/queue/{order}.png")
-        
-    if (pain % 100 == 0): 
+
+    if pain % 100 == 0:
         await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
 
-    #await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+    # await message.channel.send(file=discord.File(open("pain/temp.png", "rb")))
+
 
 async def joy_message(message):
 
-    # Updating pain and sending to mongoDB 
+    # Updating pain and sending to mongoDB
     global pain
     global order
     global queue
@@ -148,30 +161,36 @@ async def joy_message(message):
         text = "joy: {}".format(abs(pain))
 
     w, h = draw.textsize(text, font=font)
-    draw.text(((W-w)/2,(H-h)/2), text, font=font, fill=(255, 0, 0))
+    draw.text(((W - w) / 2, (H - h) / 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2 + 2, (H - h) / 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2, (H - h) / 2 + 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2 + 2, (H - h) / 2 + 2), text, font=font, fill=(0, 0, 0))
+    draw.text(((W - w) / 2 + 1, (H - h) / 2 + 1), text, (255, 255, 255), font=font)
     img.save(f"media/queue/{order}.png")
 
-    if (pain % 100 == 0): 
+    if pain % 100 == 0:
         await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
+
 
 async def pain_queue():
 
     global pain_queue_running
     global queue
-    
-    while(len(queue) > 0):
-        
+
+    while len(queue) > 0:
+
         oldest = min(queue.keys())
-    
+
         # post and remove the picture
         with open(f"media/queue/{oldest}.png", "rb") as painfile:
             await queue[oldest].send(file=discord.File(painfile))
 
         del queue[oldest]
-        os.remove(f'media/queue/{oldest}.png')
+        os.remove(f"media/queue/{oldest}.png")
         time.sleep(1)
 
     pain_queue_running = False
+
 
 # TODO Update this
 @bot.command()
@@ -181,6 +200,7 @@ async def help(ctx):
         colour=embed_colour,
     )
     await ctx.message.channel.send(embed=embed)
+
 
 # TODO Switch this to reading stuff off a .csv or something
 # Dictionary of textbooks/guides related to course
@@ -223,6 +243,7 @@ async def get(ctx):
                 )
                 await ctx.message.channel.send(embed=embed)
 
+
 @bot.event
 async def on_member_join(member):
     # Sends new members a private message reminding them to assign themselves a role
@@ -235,7 +256,8 @@ async def on_member_join(member):
     )
     await member.send(embed=embed)
 
-@bot.command(brief='Checks if Kevin Lin is bald')
+
+@bot.command(brief="Checks if Kevin Lin is bald")
 async def iskevinbald(ctx):
     # Essential command, do not remove
 
@@ -250,34 +272,36 @@ def build_argparser():
 
     return parser
 
+
 # make sure to set cron job at 5am to start script
 async def checkTime():
-    # Checking every second to see if it is 11:59:50, at which point the bot saves the day's pain and posts it in a server, 
+    # Checking every second to see if it is 11:59:50, at which point the bot saves the day's pain and posts it in a server,
     # as a way to persist through Heroku's daily restart. Hidden at bottom of script so no one seems my while loop
     print("Timer Started")
 
-    while(True):
+    while True:
         current_time = datetime.now().strftime("%H:%M:%S")
 
-        if(current_time == '04:59:45'):
+        if current_time == "04:59:45":
             # Print all the pain to a file and send to counting channel
             # Send 1 message after that which includes only the latest value of pain
-           
+
             print("Compiling the day's pain")
-            with open('pain.txt', 'w') as painfile:
+            with open("pain.txt", "w") as painfile:
                 painfile.write(str(pain))
 
             exit()
 
-        
         await sleep(1)
 
-@bot.command(brief='Admin/Development Command')
+
+@bot.command(brief="Admin/Development Command")
 async def force_quit(ctx):
-    if (ctx.message.author.id == 168388106049814528):
-        with open('pain.txt', 'w') as painfile:
+    if ctx.message.author.id == 168388106049814528:
+        with open("pain.txt", "w") as painfile:
             painfile.write(str(pain))
             exit()
+
 
 def main():
     args = build_argparser().parse_args()
@@ -292,5 +316,5 @@ def main():
     token.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main() or 0)

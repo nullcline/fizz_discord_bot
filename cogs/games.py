@@ -14,15 +14,18 @@ games = {
     "AU": "Among Us",
 }
 
+
 class GamesCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        print("games.py: Ready")
 
     @commands.command()
     @commands.guild_only()
     async def game(self, ctx):
         # Finds requested game from dictionary then toggles the role onto the user
-        
+
         request = str(ctx.message.content[10:]).upper()
 
         role = discord.utils.get(ctx.guild.roles, name=games[request])
@@ -40,6 +43,7 @@ class GamesCog(commands.Cog):
                 colour=embed_colour,
             )
             await ctx.message.channel.send(embed=embed)
-    
+
+
 def setup(bot):
     bot.add_cog(GamesCog(bot))
