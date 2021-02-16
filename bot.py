@@ -283,7 +283,7 @@ def main():
     if args.dev:
         token = open("devtoken.txt", "r")
     else:
-        token = open("token.txt", "r")
+        token = "NzA3NDk0Mzk5NjA4NzUwMTIx.XrJngQ.XDtq_tmYQ34JxFixjW1R8QPMoBg"
 
     bot.run(str(token.readline()))
     token.close()
