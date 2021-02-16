@@ -25,7 +25,7 @@ class RolesCog(commands.Cog):
         self.bot = bot
         # Need to do this extra retrieving steps because on_reaction_add/remove doesn't work with old memories
         # (not in cache) so the raw version that gives the payload only must be used
-        self.fizz = bot.get_guild(705199577396936744)
+        self.fizz = bot.get_guild(689295380474888194)
         self.year_roles = [
             discord.utils.get(self.fizz.roles, name="Pre-EngPhys"),
             discord.utils.get(self.fizz.roles, name="2nd Year"),
