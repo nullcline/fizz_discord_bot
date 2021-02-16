@@ -260,14 +260,6 @@ async def iskevinbald(ctx):
     embed = discord.Embed(description="Yes", colour=embed_colour)
     await ctx.message.channel.send(embed=embed)
 
-
-# quick parser to make development a bit easier
-def build_argparser():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dev", type=bool, default=False, help="there is no help")
-
-    return parser
-
 @bot.command(brief="Admin/Development Command")
 async def force_quit(ctx):
     if ctx.message.author.id == 168388106049814528:
@@ -277,16 +269,7 @@ async def force_quit(ctx):
 
 
 def main():
-    args = build_argparser().parse_args()
-
-    # Rudimentary token security measure. If it leaks I must have done something very wrong
-    if args.dev:
-        token = open("devtoken.txt", "r")
-    else:
-        token = "NzA3NDk0Mzk5NjA4NzUwMTIx.XrJngQ.XDtq_tmYQ34JxFixjW1R8QPMoBg"
-
-    bot.run(str(token.readline()))
-    token.close()
+    bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.XrJngQ.XDtq_tmYQ34JxFixjW1R8QPMoBg")
 
 
 if __name__ == "__main__":
