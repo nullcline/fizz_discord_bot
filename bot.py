@@ -15,20 +15,20 @@ from datetime import datetime
 # This regression of code won't work for Heroku, for reasons you'd understand if you've used Heroku to host a bot.
 
 # For splitting the bot up
-initial_extensions = ["cogs.roles", "cogs.games", "cogs.util", "cogs.music"]
+initial_extensions = ["cogs.roles", "cogs.games", "cogs.util"]
 
 # General Setup
 bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
 bot.remove_command("help")
 embed_colour = discord.Colour.red()
 
-# Pain related Setup. I know the mongoDB password is just sitting there but like... the data is literally how many times we've typed "pain" so idc lole
+# Pain related Setup. I know the mongoDB password is just sitting there but like... the data is literally how many times we've typed "pain" so idc lol
 random.seed()
 cluster = MongoClient(
     "mongodb+srv://fizz:fizz2020@cluster0.vl4ko.mongodb.net/<dbname>?retryWrites=true&w=majority"
 )
 db = cluster["discord"]
-collection = db["pain"]
+collection = db["paincount"]
 
 # Pain
 pain_queue_running = False
@@ -39,8 +39,8 @@ queue = {}
 pain_list = ["PAIN", "AGONY", "SUFFERING", "DESPAIR", "CHAIN", "🍞", "🥖", "PAIN PEKO"]
 joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
 
-with open("pain.txt", "r") as painfile:
-    pain = int(painfile.readline())
+# Gets the most recent pain entry, just for initialization
+pain = list(collection.find().sort("time",-1).limit(1))[0]["pain"]
 
 # Function that runs when the bot is fully ready (can access the cache)
 @bot.event
@@ -49,10 +49,6 @@ async def on_ready():
     # Load the cogs
     for extension in initial_extensions:
         bot.load_extension(extension)
-
-    thread = threading.Thread(target=await checkTime())
-    thread.start()
-    thread.join()
 
     print("bot.py: Extensions loaded, Bot Ready")
 
@@ -271,29 +267,6 @@ def build_argparser():
     parser.add_argument("--dev", type=bool, default=False, help="there is no help")
 
     return parser
-
-
-# make sure to set cron job at 5am to start script
-async def checkTime():
-    # Checking every second to see if it is 11:59:50, at which point the bot saves the day's pain and posts it in a server,
-    # as a way to persist through Heroku's daily restart. Hidden at bottom of script so no one seems my while loop
-    print("Timer Started")
-
-    while True:
-        current_time = datetime.now().strftime("%H:%M:%S")
-
-        if current_time == "04:59:45":
-            # Print all the pain to a file and send to counting channel
-            # Send 1 message after that which includes only the latest value of pain
-
-            print("Compiling the day's pain")
-            with open("pain.txt", "w") as painfile:
-                painfile.write(str(pain))
-
-            exit()
-
-        await sleep(1)
-
 
 @bot.command(brief="Admin/Development Command")
 async def force_quit(ctx):
