@@ -71,7 +71,7 @@ class RolesCog(commands.Cog):
 
     # Updates year standing. Only Andrew can use this :) hi
     @commands.command()
-    async def rollyear(self, ctx):
+    async def asdasdasdasdasd(self, ctx):
 
         all_years = list(rollover.keys())
         members = ctx.guild.members

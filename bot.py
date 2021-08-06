@@ -16,7 +16,7 @@ from datetime import datetime
 initial_extensions = ["cogs.roles", "cogs.games", "cogs.util"]
 
 # General Setup
-intents = discord.Intents(messages=True, members=True)
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=commands.when_mentioned_or("sudo ", "Sudo ", "SUDO ", "sudo"), intents=intents)
 bot.remove_command("help")
 embed_colour = discord.Colour.red()
