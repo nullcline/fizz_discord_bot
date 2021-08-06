@@ -71,11 +71,11 @@ class RolesCog(commands.Cog):
 
     # Updates year standing. Only Andrew can use this :) hi
     @commands.command()
-    @commands.is_owner()
-    async def supersecretcommandname(self, ctx):
+    async def rollyear(self, ctx):
 
         all_years = list(rollover.keys())
         members = ctx.guild.members
+        print(members)
 
         for member in members:
             print(member.roles)

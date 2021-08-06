@@ -12,13 +12,12 @@ from datetime import datetime
 # Anything here is run before ```bot.run(str(token.readline()))``` is run, so you cannot access anything the bot usually can.
 # If you want a channel or member object, you need to wait for on_ready() to be called or request it in on_ready()
 
-# This regression of code won't work for Heroku, for reasons you'd understand if you've used Heroku to host a bot.
-
 # For splitting the bot up
 initial_extensions = ["cogs.roles", "cogs.games", "cogs.util"]
 
 # General Setup
-bot = commands.Bot(command_prefix=("sudo ", "Sudo ", "SUDO ", "sudo"))
+intents = discord.Intents(messages=True, members=True)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or("sudo ", "Sudo ", "SUDO ", "sudo"), intents=intents)
 bot.remove_command("help")
 embed_colour = discord.Colour.red()
 
@@ -192,6 +191,7 @@ async def pain_queue():
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(
+        
         description="Ṭ̶̔ḩ̴̦̑͗͜e̶̦͛r̷̮̹̂ͅe̸̬͖͊͂ ̷̖̭̻̃̐ì̸̛̲̥͗ș̸̆ ̸͇̅n̵̢͓͚͗͛ǫ̴̣̅ ̸̘̌͆̑ḫ̶̫̰̑e̷̼̼̒l̸̲͍̯̈́͂͊p̵̋̂͋͜",
         colour=embed_colour,
     )
