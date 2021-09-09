@@ -1,7 +1,5 @@
 .vscode
-testbot.py
 token.txt
 devtoken.txt
-Procfile
 cogs/_pycache_
 song.mp3
