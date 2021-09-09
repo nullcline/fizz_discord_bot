@@ -269,7 +269,7 @@ async def force_quit(ctx):
 
 
 def main():
-    bot.run("NzA3NDk0Mzk5NjA4NzUwMTIx.XrJngQ.XDtq_tmYQ34JxFixjW1R8QPMoBg")
+    bot.run("goddamnit i uploaded the token again")
 
 
 if __name__ == "__main__":
