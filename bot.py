@@ -6,6 +6,8 @@ from discord.ext import commands, tasks
 from PIL import Image, ImageFont, ImageDraw
 from datetime import datetime
 
+# test
+
 # Using cogs for organization of bot (so this isn't a 500 line python script).
 # The more finicky functions are kept in this main script as I don't want to add more complexity on top of them.
 
