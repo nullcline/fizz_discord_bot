@@ -39,6 +39,7 @@ queue = {}
 # Trigger words for pain/joy
 pain_list = ["PAIN", "AGONY", "SUFFERING", "DESPAIR", "CHAIN", "🍞", "🥖", "PAIN PEKO"]
 joy_list = ["JOY", "BLESSED", "COMFORT", "HAPPY", "RELIEF", "WELLNESS", "POG"]
+cat_list = ["CAT", "KITTY"]
 
 # Gets the most recent pain entry, just for initialization
 pain = list(collection.find().sort("time",-1).limit(1))[0]["pain"]
@@ -82,6 +83,9 @@ async def on_message(message):
         if not pain_queue_running:
             pain_queue_running = True
             await pain_queue()
+
+    if message.content.upper() in cat_list:
+        await cat_message(message)       
 
 
 async def pain_message(message):
@@ -167,6 +171,12 @@ async def joy_message(message):
 
     if pain % 100 == 0:
         await message.channel.send(file=discord.File(open("media/pain.mp4", "rb")))
+
+
+async def cat_message(message):
+    cat_folder = len(glob.glob("media/joy/*"))
+    cat_photo = random.uniform(0, cat_folder)
+    await message.channel.send(file=discord.File(open("media/joy/{}.png".format(int(cat_photo)))))       
 
 
 async def pain_queue():
