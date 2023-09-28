@@ -15,3 +15,7 @@ This bot is intended to replace common bots like MEE6 or Dyno. It mostly has ent
 
 ## How to setup your own bot:
 [I pretty much exclusively used the documentation, which includes decent examples](https://discordpy.readthedocs.io/en/latest/api.html). I also consulted the discord.py Discord for some difficult debugging.
+
+## Pain
+The pain logging became very popular, and to keep up with the output some of my classmates were putting out I had to learn about asynchronous programming patterns as well as database management in order to make sure all submissions were being parsed properly.
+![pain](assets/pain.png) 
